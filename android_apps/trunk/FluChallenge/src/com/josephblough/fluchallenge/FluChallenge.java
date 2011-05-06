@@ -58,24 +58,10 @@ public class FluChallenge extends Activity {
 	    }
 	});
         
-        ((Button)findViewById(R.id.flu_pages_rss_json)).setOnClickListener(new OnClickListener() {
-	    
-	    public void onClick(View v) {
-		retriever.getFluPagesAsJson();
-	    }
-	});
-        
         ((Button)findViewById(R.id.cdc_features_pages_xml)).setOnClickListener(new OnClickListener() {
 	    
 	    public void onClick(View v) {
 		retriever.getCdcFeaturesPagesAsXml();
-	    }
-	});
-        
-        ((Button)findViewById(R.id.cdc_features_pages_json)).setOnClickListener(new OnClickListener() {
-	    
-	    public void onClick(View v) {
-		retriever.getCdcFeaturesPagesAsJson();
 	    }
 	});
         

@@ -6,13 +6,7 @@
     <Button android:id="@+id/weekly_flu_activity" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/weekly_flu_activity_xml"></Button>
     <Button android:id="@+id/flu_updates_rss" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/flu_updates_rss_xml"></Button>
     <Button android:id="@+id/flu_podcasts" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/flu_podcasts_rss"></Button>
-    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1" android:orientation="horizontal">
-        <Button android:id="@+id/flu_pages_rss_xml" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/flu_pages_rss_xml" android:layout_weight="50"></Button>
-        <Button android:id="@+id/flu_pages_rss_json" android:layout_height="wrap_content" android:text="@string/flu_pages_rss_json" android:layout_width="wrap_content" android:layout_weight="50"></Button>
-    </LinearLayout>
-    <LinearLayout android:layout_height="wrap_content" android:layout_width="match_parent" android:id="@+id/linearLayout1" android:orientation="horizontal">
-        <Button android:id="@+id/cdc_features_pages_xml" android:layout_height="wrap_content" android:layout_width="wrap_content" android:text="@string/cdc_pages_rss_xml" android:layout_weight="50"></Button>
-        <Button android:id="@+id/cdc_features_pages_json" android:layout_height="wrap_content" android:text="@string/cdc_pages_rss_json" android:layout_width="wrap_content" android:layout_weight="50"></Button>
-    </LinearLayout>
+    <Button android:id="@+id/flu_pages_rss_xml" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/flu_pages_rss_xml"></Button>
+    <Button android:id="@+id/cdc_features_pages_xml" android:layout_height="wrap_content" android:layout_width="match_parent" android:text="@string/cdc_pages_rss_xml"></Button>
     <Button android:text="@string/tabbed_interface" android:layout_height="wrap_content" android:id="@+id/tabbed_interface" android:layout_width="match_parent" android:layout_gravity="bottom"></Button>
 </LinearLayout>
