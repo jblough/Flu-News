@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Flu App Challenge</string>
+    <string name="flu_vaccination_estimates_xls">Influenza Vaccination Estimatest (xls)</string>
+    <string name="weekly_flu_activity_xml">Weekly Flu Activity Report</string>
+    <string name="flu_pages_rss_xml">Influenza Pages (xml)</string>
+    <string name="flu_pages_rss_json">Influenza Pages (json)</string>
+    <string name="flu_updates_rss_xml">Influenza Updates RSS (xml)</string>
+    <string name="flu_podcasts_rss">Influenza Podcasts</string>
+    <string name="cdc_pages_rss_xml">CDC Features Pages (xml)</string>
+    <string name="cdc_pages_rss_json">CDC Features Pages (json)</string>
+    <string name="tabbed_interface">Tabbed Interface</string>
+</resources>
