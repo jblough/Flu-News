@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.transport;
+package com.josephblough.fluchallenge.handlers;
 
 import java.util.Stack;
 
@@ -6,9 +6,9 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.josephblough.fluchallenge.reports.FluReport;
-import com.josephblough.fluchallenge.reports.State;
-import com.josephblough.fluchallenge.reports.TimePeriod;
+import com.josephblough.fluchallenge.data.FluReport;
+import com.josephblough.fluchallenge.data.State;
+import com.josephblough.fluchallenge.data.TimePeriod;
 
 
 import android.util.Log;

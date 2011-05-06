@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.transport;
+package com.josephblough.fluchallenge.handlers;
 
 import java.util.Stack;
 
@@ -6,57 +6,45 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import com.josephblough.fluchallenge.data.Feed;
+import com.josephblough.fluchallenge.data.FeedEntry;
+
 
 /*
  * <?xml version="1.0" encoding="UTF-8" ?>
- * <rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
- * 	<channel>
- * 		<title>FLU Podcasts from CDC</title>
- * 		<description>A customized podcast series from the US Centers for Disease Control and Prevention (CDC) for all podcasts related to the health topic  FLU </description>
- * 		<link>http://www2c.cdc.gov/podcasts/</link>
- * 		<image>
- * 			<title>CDC Logo</title>
- * 			<url>http://www2c.cdc.gov/podcasts/images/CDCLogo.jpg</url>
- * 			<link>http://www2c.cdc.gov/podcasts/</link>
- * 			<width>100</width>
- * 			<height>75</height>
- * 		</image>
- * 		<language>en-us</language>
- * 		<webMaster>imtech@cdc.gov (imtech)</webMaster>
- * 		<category>Health</category>
- * 		<category>Public Health</category>
- * 		<itunes:image href="http://www2c.cdc.gov/podcasts/images/CDCLogo.jpg" />
- * 		<itunes:subtitle></itunes:subtitle>
- * 		<itunes:explicit>No</itunes:explicit>
- * 		<itunes:author>CDC, US Centers for Disease Control and Prevention</itunes:author>
- * 		<itunes:owner>
- * 			<itunes:name>Centers for Disease Control and Prevention (CDC)</itunes:name>
- * 			<itunes:email>podcasts@cdc.gov</itunes:email>
- * 		</itunes:owner>
- * 		<itunes:category text="Science &amp; Medicine"/>
- * 		<item>
- * 			<title>Put Your Hands Together</title>
- * 			<description>In this podcast, learn how to help stop the spread of infection and stay healthy. It's easy when you 'Put Your Hands Together.'</description>
- * 			<link>http://www2c.cdc.gov/podcasts/download.asp?af=h&amp;f=10109</link>
- * 			<guid>http://www2c.cdc.gov/podcasts/download.asp?af=h&amp;f=10109</guid>
- * 			<pubDate>Thu, 24 Mar 2011 16:30:00 EST</pubDate>
- * 			<enclosure url="http://www2c.cdc.gov/podcasts/downloader/download.mp3?af=a&amp;f=10109" length="3829439" type="audio/mpeg"></enclosure>
- * 			<itunes:duration>00:03:59</itunes:duration>
- * 			<itunes:subtitle></itunes:subtitle>
- * 			<itunes:author>CDC, US Centers for Disease Control and Prevention</itunes:author>
- * 			<itunes:explicit>No</itunes:explicit>
- * 			<itunes:summary>In this podcast, learn how to help stop the spread of infection and stay healthy. It's easy when you 'Put Your Hands Together.'</itunes:summary>
- * 		</item>
- * 
+ * <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+ *	<channel>
+ *		<title>CDC Flu Updates</title>
+ *		<description>An RSS feed of new postings to the CDC flu site.</description>
+ *		<link>http://www.cdc.gov/flu/whatsnew.htm</link>
+ *		<atom:link href="http://www.cdc.gov/flu/whatsnew.htm" rel="self" type="application/rss+xml" />
+ *		<image>
+ *			<title>CDC Flu Updates</title>
+ *			<url>http://www2c.cdc.gov/podcasts/images/cdclogo.jpg</url>
+ *			<link>http://www.cdc.gov/flu/whatsnew.htm</link>
+ *			<width>95</width>
+ *			<height>61</height>
+ *		</image>
+ *		<language>en-us</language>
+ *		<webMaster>imtech@cdc.gov (imtech)</webMaster>
+ *		<category>Health</category>
+ *		<category>Public Health</category>
+ *		<item>
+ *			<title>Situation Update: Summary of Weekly FluView</title>
+ *			<description> </description>
+ *			<link>http://www2c.cdc.gov/podcasts/download.asp?af=h&amp;f=4635750</link>
+ *			<guid>http://www2c.cdc.gov/podcasts/download.asp?af=h&amp;f=4635750</guid>
+ *			<pubDate>Fri, 15 Apr 2011 15:00:00 EST</pubDate>
+ *		</item>
  *		...
  *	</channel>
  * </rss> 
  */
 
-public class FluPodcastsFeedXmlHandler extends DefaultHandler {
+public class FluUpdatesFeedXmlHandler extends DefaultHandler {
 
-    private static final String TAG = "FluPodcastsFeedXmlHandler";
-
+    private static final String TAG = "FluUpdatesFeedXmlHandler";
+    
     private static final String RSS_TAG = "rss";
     private static final String CHANNEL_TAG = "channel";
     private static final String TITLE_TAG = "title";
@@ -72,11 +60,6 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
     private static final String ITEM_TAG = "item";
     private static final String ITEM_GUID_TAG = "guid";
     private static final String ITEM_PUBDATE_TAG = "pubDate";
-    private static final String ITEM_ENCLOSURE_TAG = "enclosure";
-    private static final String ITEM_DURATION_TAG = "duration";
-    
-    private static final String ITEM_LENGTH_ATTRIBUTE = "length";
-    private static final String ITEM_TYPE_ATTRIBUTE = "type";
     
     private static final int RSS = 0;
     private static final int CHANNEL = 1;
@@ -100,24 +83,23 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
     private static final int ITEM_GUID = 19;
     private static final int ITEM_PUBDATE = 20;
     private static final int UNKNOWN_ELEMENT = 21;
-    private static final int ITEM_DURATION = 22;
-
+    
     private Stack<Integer> tagStack;
     public Feed feed;
-    private PodcastFeedEntry currentEntry;
+    private FeedEntry currentEntry;
     private StringBuffer characterBuffer;
-
+    
     public void startDocument() throws SAXException {
 	tagStack = new Stack<Integer>();
 	feed = new Feed();
 	characterBuffer = new StringBuffer();
     }
-
+    
     public void startElement(String uri, String localName, String qName, 
 	    Attributes attributes) throws SAXException {
 	if (ITEM_TAG.equals(localName)) {
 	    tagStack.push(ITEM);
-	    currentEntry = new PodcastFeedEntry();
+	    currentEntry = new FeedEntry();
 	}
 	else if (TITLE_TAG.equals(localName)) {
 	    switch (tagStack.peek()) {
@@ -173,19 +155,6 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
 	else if (CHANNEL_TAG.equals(localName)) {
 	    tagStack.push(CHANNEL);
 	}
-	else if (ITEM_ENCLOSURE_TAG.equals(localName)) {
-	    try {
-		currentEntry.length = Integer.valueOf(attributes.getValue(ITEM_LENGTH_ATTRIBUTE));
-	    }
-	    catch (Exception e) {
-		currentEntry.length = 0;
-	    }
-	    currentEntry.type = attributes.getValue(ITEM_TYPE_ATTRIBUTE);
-	    tagStack.push(UNKNOWN_ELEMENT);
-	}
-	else if (ITEM_DURATION_TAG.equals(localName)) {
-	    tagStack.push(ITEM_DURATION);
-	}	
 	else {
 	    tagStack.push(UNKNOWN_ELEMENT);
 	}
@@ -193,7 +162,7 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
 
     public void endElement(String uri, String localName, String qName) throws SAXException {
 	tagStack.pop();
-
+	
 	if (ITEM_TAG.equals(localName)) {
 	    feed.items.add(currentEntry);
 	    currentEntry = null;
@@ -242,19 +211,16 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
 	else if (ITEM_PUBDATE_TAG.equals(localName)) {
 	    currentEntry.date = characterBuffer.toString();
 	}
-	else if (ITEM_DURATION_TAG.equals(localName)) {
-	    currentEntry.duration = characterBuffer.toString();
-	}
 	else if (FEED_CATEGORY_TAG.equals(localName)) {
 	    feed.categories.add(characterBuffer.toString());
 	}
 	else if (CHANNEL_TAG.equals(localName)) {
 	}
-
+	
 	// Empty out the character buffer
 	characterBuffer = characterBuffer.delete(0, characterBuffer.length());
     }	
-
+    
     public void characters(char[] ch, int start, int length) throws SAXException {
 	switch (tagStack.peek()) {
 	case FEED_TITLE:
@@ -267,19 +233,17 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
 	case ITEM_GUID:
 	case ITEM_PUBDATE:
 	case FEED_CATEGORY:
-	case ITEM_DURATION:
 	    characterBuffer.append(xmlDecode(new String(ch, start, length)));
 	    break;
 	}
     }
-
+    
     public void endDocument() throws SAXException {
     }
 
     private static String xmlDecode(String str) {
 	return str.replaceAll("&amp;", "&").replaceAll("&apos;", "'")
-	.replaceAll("&lt;", "<").replaceAll("&gt;", ">")
-	.replaceAll("&quot;", "\"");
+		.replaceAll("&lt;", "<").replaceAll("&gt;", ">")
+		.replaceAll("&quot;", "\"");
     }
-
 }

@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.reports;
+package com.josephblough.fluchallenge.data;
 
 public class State {
 

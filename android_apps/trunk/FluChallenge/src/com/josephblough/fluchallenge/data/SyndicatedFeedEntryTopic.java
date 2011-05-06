@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.transport;
+package com.josephblough.fluchallenge.data;
 
 public class SyndicatedFeedEntryTopic {
 	public int id;

@@ -1,10 +1,14 @@
-package com.josephblough.fluchallenge.transport;
+package com.josephblough.fluchallenge.handlers;
 
 import java.util.Stack;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import com.josephblough.fluchallenge.data.SyndicatedFeed;
+import com.josephblough.fluchallenge.data.SyndicatedFeedEntry;
+import com.josephblough.fluchallenge.data.SyndicatedFeedEntryTopic;
 
 import android.util.Log;
 

@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.transport;
+package com.josephblough.fluchallenge.data;
 
 import java.util.ArrayList;
 import java.util.List;

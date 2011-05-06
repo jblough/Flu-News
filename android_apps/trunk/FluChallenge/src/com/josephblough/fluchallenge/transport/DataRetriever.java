@@ -13,7 +13,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
-import com.josephblough.fluchallenge.reports.FluReport;
+import com.josephblough.fluchallenge.data.Feed;
+import com.josephblough.fluchallenge.data.FluReport;
+import com.josephblough.fluchallenge.data.SyndicatedFeed;
+import com.josephblough.fluchallenge.handlers.FluPodcastsFeedXmlHandler;
+import com.josephblough.fluchallenge.handlers.FluUpdatesFeedXmlHandler;
+import com.josephblough.fluchallenge.handlers.SyndicatedFeedXmlHandler;
+import com.josephblough.fluchallenge.handlers.WeeklyFluActivityXmlHandler;
 
 import android.util.Log;
 
