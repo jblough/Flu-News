@@ -35,9 +35,11 @@ public class DataRetriever {
     private static final String CDC_FEATURES_PAGES_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011";
     //private static final String CDC_FEATURES_PAGES_AS_JSON_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011&fmt=json";
     private static final String SYNDICATED_FEED_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=%d&days=90";
+    public static final int FLU_PAGES_TOPIC_ID = 26829;
+    public static final int CDC_PAGES_TOPIC_ID = 26816;
     
     
-    public void getFluVaccinationEstimates() {
+    public static void getFluVaccinationEstimates() {
 	// Excel spreadsheet
 	HttpClient client = new DefaultHttpClient();
 	HttpGet get = new HttpGet(FLU_VACCINATION_ESTIMATES_URL);
@@ -49,7 +51,7 @@ public class DataRetriever {
 	}
     }
     
-    public FluReport getFluActivityReport() {
+    public static FluReport getFluActivityReport() {
 	Log.d(TAG, "Flu activity report:");
 	try {
 	    HttpClient client = new DefaultHttpClient();
@@ -73,12 +75,12 @@ public class DataRetriever {
 	return new FluReport();
     }
     
-    public SyndicatedFeed getFluPagesAsXml() {
+    public static SyndicatedFeed getFluPagesAsXml() {
 	Log.d(TAG, "Flu pages:");
 	return retrieveSyndicatedFeed(FLU_PAGES_AS_XML_URL);
     }
     
-    public Feed getFluUpdates() {
+    public static Feed getFluUpdates() {
 	Log.d(TAG, "Flu updates:");
 	try {
 	    HttpClient client = new DefaultHttpClient();
@@ -102,7 +104,7 @@ public class DataRetriever {
 	return new Feed();
     }
     
-    public Feed getFluPodcasts() {
+    public static Feed getFluPodcasts() {
 	Log.d(TAG, "Flu podcasts:");
 	try {
 	    HttpClient client = new DefaultHttpClient();
@@ -126,17 +128,17 @@ public class DataRetriever {
 	return new Feed();
     }
     
-    public SyndicatedFeed getCdcFeaturesPagesAsXml() {
+    public static SyndicatedFeed getCdcFeaturesPagesAsXml() {
 	Log.d(TAG, "CDC Features pages:");
 	return retrieveSyndicatedFeed(CDC_FEATURES_PAGES_AS_XML_URL);
     }
 
-    public SyndicatedFeed retrieveSyndicatedFeed(final int topic) {
+    public static SyndicatedFeed retrieveSyndicatedFeed(final int topic) {
 	String url = SYNDICATED_FEED_AS_XML_URL.replace("%d", Integer.toString(topic));
 	return retrieveSyndicatedFeed(url);
     }
     
-    public SyndicatedFeed retrieveSyndicatedFeed(final String url) {
+    public static SyndicatedFeed retrieveSyndicatedFeed(final String url) {
 	try {
 	    HttpClient client = new DefaultHttpClient();
 	    HttpGet httpMethod = new HttpGet(url);

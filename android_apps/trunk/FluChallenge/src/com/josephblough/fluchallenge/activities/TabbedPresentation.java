@@ -30,11 +30,11 @@ public class TabbedPresentation extends TabActivity {
 	// CDC Feature Pages
 	
 	intent = new Intent().setClass(this, FluActivity.class);
-	spec = tabHost.newTabSpec("activity").setIndicator("Activity Report", res.getDrawable(R.drawable.icon)).setContent(intent);
+	spec = tabHost.newTabSpec("activity").setIndicator("Activity Report"/*, res.getDrawable(R.drawable.icon)*/).setContent(intent);
 	tabHost.addTab(spec);
 	
 	intent = new Intent().setClass(this, FluUpdates.class);
-	spec = tabHost.newTabSpec("updates").setIndicator("Updates", res.getDrawable(R.drawable.icon)).setContent(intent);
+	spec = tabHost.newTabSpec("updates").setIndicator("Updates"/*, res.getDrawable(R.drawable.icon)*/).setContent(intent);
 	tabHost.addTab(spec);
 
 	intent = new Intent().setClass(this, FluPodcasts.class);
@@ -42,11 +42,11 @@ public class TabbedPresentation extends TabActivity {
 	tabHost.addTab(spec);
 
 	intent = new Intent().setClass(this, FluPages.class);
-	spec = tabHost.newTabSpec("pages").setIndicator("Pages", res.getDrawable(R.drawable.icon)).setContent(intent);
+	spec = tabHost.newTabSpec("pages").setIndicator("Pages"/*, res.getDrawable(R.drawable.icon)*/).setContent(intent);
 	tabHost.addTab(spec);
 	
 	intent = new Intent().setClass(this, CdcFeaturePages.class);
-	spec = tabHost.newTabSpec("features").setIndicator("CDC Feature Pages", res.getDrawable(R.drawable.icon)).setContent(intent);
+	spec = tabHost.newTabSpec("features").setIndicator("CDC Pages"/*, res.getDrawable(R.drawable.icon)*/).setContent(intent);
 	tabHost.addTab(spec);
 
 	tabHost.setCurrentTab(0);
