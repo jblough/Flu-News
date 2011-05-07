@@ -1,9 +1,9 @@
 package com.josephblough.fluchallenge.activities;
 
+import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.services.FluPodcastsFeedDownloaderService;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -12,7 +12,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.widget.Toast;
 
-public class FluPodcasts extends ListActivity {
+public class FluPodcasts extends FeedListActivity {
     
     private ProgressDialog progress = null;
     private final String ERROR_MSG = "There was an error downloading the Flu podcasts feed";
@@ -20,10 +20,14 @@ public class FluPodcasts extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        loadFluUpdatesFeed();
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	if (app.fluPodcastsFeed != null && app.fluPodcastsFeed.items != null && app.fluPodcastsFeed.items.size() > 0)
+	    done();
+	else
+	    loadFluPodcastsFeed();
     }
     
-    private void loadFluUpdatesFeed() {
+    private void loadFluPodcastsFeed() {
 	Intent intent = new Intent(this, FluPodcastsFeedDownloaderService.class);
 	intent.putExtra(FluPodcastsFeedDownloaderService.EXTRA_MESSENGER,
 		new Messenger(new Handler() {
@@ -51,5 +55,9 @@ public class FluPodcasts extends ListActivity {
     private void done() {
 	if (progress != null)
 	    progress.dismiss();
+	
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(app.fluPodcastsFeed.items);
+	setListAdapter(adapter);
     }
 }

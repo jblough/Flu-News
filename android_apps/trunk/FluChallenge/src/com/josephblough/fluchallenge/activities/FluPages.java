@@ -1,10 +1,11 @@
 package com.josephblough.fluchallenge.activities;
 
+import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.data.SyndicatedFeed;
 import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
 import com.josephblough.fluchallenge.transport.DataRetriever;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +14,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.widget.Toast;
 
-public class FluPages extends ListActivity {
+public class FluPages extends FeedListActivity {
     
     private ProgressDialog progress = null;
     private final String ERROR_MSG = "There was an error downloading the Flu pages feed";
@@ -21,7 +22,12 @@ public class FluPages extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        loadFluPagesFeed();
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	SyndicatedFeed feed = app.syndicatedFeeds.get(DataRetriever.FLU_PAGES_TOPIC_ID);
+	if (feed != null && feed.items != null && feed.items.size() > 0)
+	    done();
+	else
+	    loadFluPagesFeed();
     }
     
     private void loadFluPagesFeed() {
@@ -53,5 +59,9 @@ public class FluPages extends ListActivity {
     private void done() {
 	if (progress != null)
 	    progress.dismiss();
+	
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(app.syndicatedFeeds.get(DataRetriever.FLU_PAGES_TOPIC_ID).items);
+	setListAdapter(adapter);
     }
 }
