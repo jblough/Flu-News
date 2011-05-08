@@ -44,7 +44,7 @@ public class FluActivity extends Activity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG);
+	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
     
     private void done() {

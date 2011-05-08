@@ -29,7 +29,7 @@ public class SyndicatedFeedDownloaderService extends IntentService {
 	int result = Activity.RESULT_CANCELED;
 	SyndicatedFeed feed = null;
 
-	int topic = intent.getIntExtra(TOPIC_ID, DataRetriever.FLU_PAGES_TOPIC_ID);
+	int topic = intent.getIntExtra(TOPIC_ID, SyndicatedFeed.FLU_PAGES_TOPIC_ID);
 	
 	feed = DataRetriever.retrieveSyndicatedFeed(topic);
 	if (feed != null && feed.title != null && !feed.title.equals("")) {

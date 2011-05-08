@@ -3,7 +3,6 @@ package com.josephblough.fluchallenge.activities;
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.data.SyndicatedFeed;
 import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
-import com.josephblough.fluchallenge.transport.DataRetriever;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -23,7 +22,7 @@ public class CdcFeaturePages extends FeedListActivity {
         super.onCreate(savedInstanceState);
         
 	ApplicationController app = (ApplicationController)getApplicationContext();
-	SyndicatedFeed feed = app.syndicatedFeeds.get(DataRetriever.CDC_PAGES_TOPIC_ID);
+	SyndicatedFeed feed = app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID);
 	if (feed != null && feed.items != null && feed.items.size() > 0)
 	    done();
 	else
@@ -32,7 +31,7 @@ public class CdcFeaturePages extends FeedListActivity {
     
     private void loadCdcPagesFeed() {
 	Intent intent = new Intent(this, SyndicatedFeedDownloaderService.class);
-	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, DataRetriever.CDC_PAGES_TOPIC_ID);
+	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, SyndicatedFeed.CDC_PAGES_TOPIC_ID);
 	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
 		new Messenger(new Handler() {
 		    @Override
@@ -53,7 +52,7 @@ public class CdcFeaturePages extends FeedListActivity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG);
+	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
     
     private void done() {
@@ -61,7 +60,7 @@ public class CdcFeaturePages extends FeedListActivity {
 	    progress.dismiss();
 	
 	ApplicationController app = (ApplicationController)getApplicationContext();
-	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(app.syndicatedFeeds.get(DataRetriever.CDC_PAGES_TOPIC_ID).items);
+	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(this, app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID).items);
 	setListAdapter(adapter);
     }
 }

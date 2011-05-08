@@ -49,7 +49,7 @@ public class FluPodcasts extends FeedListActivity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG);
+	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
     
     private void done() {
@@ -57,7 +57,7 @@ public class FluPodcasts extends FeedListActivity {
 	    progress.dismiss();
 	
 	ApplicationController app = (ApplicationController)getApplicationContext();
-	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(app.fluPodcastsFeed.items);
+	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(this, app.fluPodcastsFeed.items);
 	setListAdapter(adapter);
     }
 }

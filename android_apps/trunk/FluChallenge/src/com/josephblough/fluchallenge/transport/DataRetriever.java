@@ -35,8 +35,6 @@ public class DataRetriever {
     private static final String CDC_FEATURES_PAGES_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011";
     //private static final String CDC_FEATURES_PAGES_AS_JSON_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011&fmt=json";
     private static final String SYNDICATED_FEED_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=%d&days=90";
-    public static final int FLU_PAGES_TOPIC_ID = 26829;
-    public static final int CDC_PAGES_TOPIC_ID = 26816;
     
     
     public static void getFluVaccinationEstimates() {

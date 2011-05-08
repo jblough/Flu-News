@@ -1,9 +1,7 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
-import com.josephblough.fluchallenge.data.SyndicatedFeed;
 import com.josephblough.fluchallenge.services.FluUpdatesFeedDownloaderService;
-import com.josephblough.fluchallenge.transport.DataRetriever;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -51,7 +49,7 @@ public class FluUpdates extends FeedListActivity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG);
+	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
     
     private void done() {
@@ -59,7 +57,7 @@ public class FluUpdates extends FeedListActivity {
 	    progress.dismiss();
 	
 	ApplicationController app = (ApplicationController)getApplicationContext();
-	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(app.fluUpdatesFeed.items);
+	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(this, app.fluUpdatesFeed.items);
 	setListAdapter(adapter);
     }
 }
