@@ -53,7 +53,9 @@ public class FeedListActivity extends ListActivity implements OnItemSelectedList
 
 
     protected class RssFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
-	SimpleDateFormat formatter = new SimpleDateFormat();
+	SimpleDateFormat inputFormatter1 = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz");
+	SimpleDateFormat inputFormatter2 = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+	SimpleDateFormat outputFormatter = new SimpleDateFormat();
 	RssFeedEntryAdapter(List<FeedEntry> entries) {
 	    super(FeedListActivity.this, android.R.layout.simple_list_item_2, entries);
 	}
@@ -68,11 +70,23 @@ public class FeedListActivity extends ListActivity implements OnItemSelectedList
 	    FeedEntry entry = super.getItem(position);
 	    ((TextView)row.findViewById(android.R.id.text1)).setText(entry.title);
 	    synchronized (this) {
+		Date date = null;
 		try {
-		    Date date = formatter.parse(entry.date);
-		    ((TextView) row.findViewById(android.R.id.text2)).setText(formatter.format(date));
+		    date = inputFormatter1.parse(entry.date);
 		}
-		catch (Exception e) {
+		catch (Exception e1) {
+		    try {
+			date = inputFormatter2.parse(entry.date);
+		    }
+		    catch (Exception e2) {
+			Log.e(TAG, "Feed date in unrecognized format");
+		    }
+		}
+		
+		if (date != null) {
+		    ((TextView) row.findViewById(android.R.id.text2)).setText(outputFormatter.format(date));
+		}
+		else {
 		    ((TextView) row.findViewById(android.R.id.text2)).setText(entry.date);
 		}
 	    }
