@@ -1,5 +1,6 @@
 package com.josephblough.fluchallenge.activities;
 
+import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.services.FluActivityReportDownloaderService;
 
 import android.app.Activity;
@@ -11,7 +12,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.widget.Toast;
 
-public class FluActivity extends Activity {
+public class FluActivityReport extends Activity {
 
     private ProgressDialog progress = null;
     private final String ERROR_MSG = "There was an error downloading the Flu report";
@@ -19,10 +20,14 @@ public class FluActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        loadFluActivityFeed();
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	if (app.fluReport != null)
+	    done();
+	else
+	    loadFluActivityReport();
     }
     
-    private void loadFluActivityFeed() {
+    private void loadFluActivityReport() {
 	Intent intent = new Intent(this, FluActivityReportDownloaderService.class);
 	intent.putExtra(FluActivityReportDownloaderService.EXTRA_MESSENGER,
 		new Messenger(new Handler() {

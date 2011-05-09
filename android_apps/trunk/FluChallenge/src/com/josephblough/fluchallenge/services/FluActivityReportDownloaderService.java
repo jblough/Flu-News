@@ -32,7 +32,7 @@ public class FluActivityReportDownloaderService extends IntentService {
 	FluReport report = null;
 	
 	report = DataRetriever.getFluActivityReport();
-	if (report != null && report.title != null && !report.title.equals("")) {
+	if (report != null) {
 	    ((ApplicationController)getApplicationContext()).fluReport = report;
 	    result = Activity.RESULT_OK;
 	}

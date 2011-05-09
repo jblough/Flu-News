@@ -29,7 +29,7 @@ public class TabbedPresentation extends TabActivity {
 	// Flu Pages
 	// CDC Feature Pages
 	
-	intent = new Intent().setClass(this, FluActivity.class);
+	intent = new Intent().setClass(this, FluActivityReport.class);
 	spec = tabHost.newTabSpec("activity").setIndicator("Activity Report"/*, res.getDrawable(R.drawable.icon)*/).setContent(intent);
 	tabHost.addTab(spec);
 	
