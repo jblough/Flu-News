@@ -1,0 +1,18 @@
+Progress indicator in listview - Done
+More podcast options - Done
+Long click menu (Visit link, share link, download podcast, play podcast, related topics)
+Launch related feeds menu (syndicated)
+refresh feeds menu items
+Some links go to PDf files ??
+Errors downloading podcasts should remove the progress indicator
+Integrate SVG rendering
+Flu activity screen
+Flu activity screen map rendering
+Change stop playing podcast image from pause to stop (square)
+Share links!!!
+
+Nice to have:
+Podcast listview format - Done (maybe work on highlite)
+Work on caching download for less studder
+desktop shortcuts/widgets
+ability to search/filter feeds
