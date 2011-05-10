@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/context_menu_view"
+        android:title="@string/context_menu_view_label" />
+
+    <item android:id="@+id/context_menu_share_link"
+        android:title="@string/context_menu_share_link_label" />
+
+</menu>

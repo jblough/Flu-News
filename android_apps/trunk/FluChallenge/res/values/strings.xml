@@ -10,4 +10,9 @@
     <string name="cdc_pages_rss_xml">CDC Features Pages (xml)</string>
     <string name="cdc_pages_rss_json">CDC Features Pages (json)</string>
     <string name="tabbed_interface">Tabbed Interface</string>
+    <string name="context_menu_view_label">View Article</string>
+    <string name="context_menu_download_label">Download Podcast</string>
+    <string name="context_menu_play_podcast_label">Play Podcast</string>
+    <string name="context_menu_share_link_label">Share Link</string>
+    <string name="context_menu_related_topics_label">Related Topics</string>
 </resources>

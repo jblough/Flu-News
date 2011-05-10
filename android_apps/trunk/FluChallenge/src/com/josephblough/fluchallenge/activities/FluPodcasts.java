@@ -1,6 +1,7 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.data.FeedEntry;
 import com.josephblough.fluchallenge.services.FluPodcastsFeedDownloaderService;
 
@@ -13,9 +14,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Toast;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 
 public class FluPodcasts extends FeedListActivity {
     private static final String TAG = "FluPodcasts";
@@ -32,7 +36,8 @@ public class FluPodcasts extends FeedListActivity {
 
 	getListView().setOnItemSelectedListener(this);
 	getListView().setOnItemClickListener(this);
-        
+        registerForContextMenu(getListView());
+
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (app.fluPodcastsFeed != null && app.fluPodcastsFeed.items != null && app.fluPodcastsFeed.items.size() > 0)
 	    done();
@@ -85,8 +90,41 @@ public class FluPodcasts extends FeedListActivity {
 	FeedEntry entry = ((PodcastFeedEntryAdapter)getListAdapter()).getItem(position);
 	visitLink(entry);
     }
-    
+
     public void refreshList() {
 	((PodcastFeedEntryAdapter)getListAdapter()).notifyDataSetChanged();
+    }
+ 
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, view, menuInfo);
+        getMenuInflater().inflate(R.menu.podcast_list_item_menu, menu);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        ApplicationController app = (ApplicationController)getApplicationContext();
+
+        switch (item.getItemId()) {
+        case R.id.context_menu_download:
+            return true;
+        case R.id.context_menu_play_podcast:
+            app.playPodcast(info.position);
+            refreshList();
+            return true;
+        case R.id.context_menu_share_link:
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, app.fluPodcastsFeed.items.get(info.position).link);
+            startActivity(Intent.createChooser(intent,"Share using"));
+            return true;
+        case R.id.context_menu_view:
+            visitLink(app.fluPodcastsFeed.items.get(info.position));
+            return true;
+        };
+
+        return super.onContextItemSelected(item);
     }
 }
