@@ -37,7 +37,7 @@ public class FluPodcasts extends FeedListActivity {
 	getListView().setOnItemSelectedListener(this);
 	getListView().setOnItemClickListener(this);
         registerForContextMenu(getListView());
-
+        
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (app.fluPodcastsFeed != null && app.fluPodcastsFeed.items != null && app.fluPodcastsFeed.items.size() > 0)
 	    done();

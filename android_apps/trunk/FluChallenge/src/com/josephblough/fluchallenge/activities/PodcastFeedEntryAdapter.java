@@ -14,9 +14,10 @@ import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
@@ -69,8 +70,7 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 	    
 	    ((TextView) row.findViewById(R.id.podcast_duration)).setText(entry.duration);
 	    
-	    final ImageButton control = (ImageButton) row.findViewById(R.id.podcast_control);
-	    control.setBackgroundDrawable(null);
+	    final ImageView control = (ImageView) row.findViewById(R.id.podcast_control);
 	    final ApplicationController app = (ApplicationController)activity.getApplicationContext();
 	    PodcastFeedEntry playingPodcast = app.getCurrentlyPlayingPodcast();
 	    if (playingPodcast != null && playingPodcast.mp3url.equals(entry.mp3url)) {
@@ -79,7 +79,48 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 	    else {
 		control.setImageBitmap(this.playImage);
 	    }
-	    control.setOnClickListener(new View.OnClickListener() {
+
+	    control.setOnClickListener(new OnClickListener() {
+	        
+	        public void onClick(View v) {
+	            Log.d(TAG, "Podcast control tapped for " + position);
+		    PodcastFeedEntry playingPodcast = app.getCurrentlyPlayingPodcast();
+		    if (playingPodcast != null && playingPodcast.mp3url.equals(entry.mp3url)) {
+			// This podcast is currently being played, stop it
+			Log.d(TAG, "Changing image back to play image");
+			control.setImageBitmap(playImage);
+			new Thread(new Runnable() {
+			    
+			    public void run() {
+				app.stopPodcast();
+			    }
+			}).start();
+		    }
+		    else {
+			// This podcast is NOT being played, play it
+			control.setImageBitmap(stopImage);
+			//activity.playPodcast(position);
+			new Thread(new Runnable() {
+			    
+			    public void run() {
+				app.playPodcast(position);
+			    }
+			}).start();
+		    }
+		    activity.refreshList();
+	        }
+	    });
+	    /*final ImageButton control = (ImageButton) row.findViewById(R.id.podcast_control);
+	    control.setBackgroundDrawable(null);
+	    final ApplicationController app = (ApplicationController)activity.getApplicationContext();
+	    PodcastFeedEntry playingPodcast = app.getCurrentlyPlayingPodcast();
+	    if (playingPodcast != null && playingPodcast.mp3url.equals(entry.mp3url)) {
+		control.setImageBitmap(this.stopImage);
+	    }
+	    else {
+		control.setImageBitmap(this.playImage);
+	    }*/
+	    /*control.setOnClickListener(new View.OnClickListener() {
 	        
 	        public void onClick(View v) {
 	            Log.d(TAG, "Podcast control tapped for " + position);
@@ -116,7 +157,7 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 	        public void onClick(View v) {
 	            activity.visitLink(entry);
 	        }
-	    });
+	    });*/
 	}
 	return row;
     }
