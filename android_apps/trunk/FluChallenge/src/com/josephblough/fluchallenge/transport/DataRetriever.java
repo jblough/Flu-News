@@ -31,7 +31,7 @@ public class DataRetriever {
     private static final String FLU_PAGES_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=26829&days=90";
     //private static final String FLU_PAGES_AS_JSON_URL = "http://t.cdc.gov/feed.aspx?tpc=26829&days=90&fmt=json";
     private static final String FLU_UPDATES_URL = "http://www2c.cdc.gov/podcasts/createrss.asp?t=r&c=20";
-    private static final String FLU_PODCASTS_URL = "http://www2c.cdc.gov/podcasts/searchandcreaterss.asp?topic=flue";
+    private static final String FLU_PODCASTS_URL = "http://www2c.cdc.gov/podcasts/searchandcreaterss.asp?topic=flu";
     private static final String CDC_FEATURES_PAGES_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011";
     //private static final String CDC_FEATURES_PAGES_AS_JSON_URL = "http://t.cdc.gov/feed.aspx?tpc=26816&fromdate=1/1/2011&fmt=json";
     private static final String SYNDICATED_FEED_AS_XML_URL = "http://t.cdc.gov/feed.aspx?tpc=%d&days=90";

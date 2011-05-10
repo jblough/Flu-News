@@ -159,6 +159,16 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 		startActivity(intent);
 	    }
 	}
+	else if (FLU_PODCASTS_TITLE.equals(feedTitle)) {
+	    ApplicationController app = (ApplicationController)getApplicationContext();
+	    if (app.fluPodcastsFeed == null) {
+		Toast.makeText(this, feedTitle + " still loading...", Toast.LENGTH_LONG).show();
+	    }
+	    else {
+		Intent intent = new Intent(this, FluPodcasts.class);
+		startActivity(intent);
+	    }
+	}
 	else {
 	    Integer feed = getFeed(position);
 	    if (feed != null) {
@@ -228,7 +238,6 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
     }
 
     private boolean isFinishedLoading(final String rowLabel) {
-	Log.d(TAG, "Is '" + rowLabel + "' finished loading?");
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (FLU_ACTIVIY_TITLE.equals(rowLabel)) {
 	    return (app.fluReport != null);

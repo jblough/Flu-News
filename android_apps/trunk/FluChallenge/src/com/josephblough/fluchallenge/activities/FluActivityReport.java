@@ -1,6 +1,7 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.services.FluActivityReportDownloaderService;
 
 import android.app.Activity;
@@ -19,6 +20,8 @@ public class FluActivityReport extends Activity {
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        setContentView(R.layout.flu_activity_report);
         
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (app.fluReport != null)

@@ -9,7 +9,6 @@
     android:layout_height="25dip"
     android:layout_centerVertical="true" />
   <TextView android:id="@+id/row_label"
-    android:text="Test"
     android:layout_alignParentLeft="true"
     android:layout_toLeftOf="@id/row_indicator"
     android:textAppearance="?android:attr/textAppearanceLarge"

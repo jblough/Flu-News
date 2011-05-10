@@ -1,15 +1,20 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.data.FeedEntry;
+import com.josephblough.fluchallenge.data.PodcastFeedEntry;
 import com.josephblough.fluchallenge.services.FluPodcastsFeedDownloaderService;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 public class FluPodcasts extends FeedListActivity {
@@ -19,6 +24,10 @@ public class FluPodcasts extends FeedListActivity {
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Tell Android that the volume control buttons should set the
+        //	media volume and not the ringer volume
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (app.fluPodcastsFeed != null && app.fluPodcastsFeed.items != null && app.fluPodcastsFeed.items.size() > 0)
@@ -57,7 +66,24 @@ public class FluPodcasts extends FeedListActivity {
 	    progress.dismiss();
 	
 	ApplicationController app = (ApplicationController)getApplicationContext();
-	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(this, app.fluPodcastsFeed.items);
+	PodcastFeedEntryAdapter adapter = new PodcastFeedEntryAdapter(this, app.fluPodcastsFeed.items);
 	setListAdapter(adapter);
+    }
+
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+	FeedEntry entry = ((PodcastFeedEntryAdapter)getListAdapter()).getItem(position);
+	//visitLink(entry);
+	playPodcast((PodcastFeedEntry)entry);
+    }
+    
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+	FeedEntry entry = ((PodcastFeedEntryAdapter)getListAdapter()).getItem(position);
+	//visitLink(entry);
+	playPodcast((PodcastFeedEntry)entry);
+    }
+    
+    public void playPodcast(PodcastFeedEntry entry) {
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	app.playUrl(entry.mp3url);
     }
 }

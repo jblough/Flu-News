@@ -37,7 +37,7 @@ public class FeedListActivity extends ListActivity implements OnItemSelectedList
 	// TODO Auto-generated method stub
     }
 
-    private void visitLink(final FeedEntry entry) {
+    protected void visitLink(final FeedEntry entry) {
 	Log.d(TAG, "Selected: " + entry.link);
 	final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(entry.link));
 	startActivity(intent);

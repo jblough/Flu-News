@@ -80,6 +80,7 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
     
     private static final String ITEM_LENGTH_ATTRIBUTE = "length";
     private static final String ITEM_TYPE_ATTRIBUTE = "type";
+    private static final String ITEM_MP3_URL_ATTRIBUTE = "url";
     
     private static final int RSS = 0;
     private static final int CHANNEL = 1;
@@ -179,6 +180,7 @@ public class FluPodcastsFeedXmlHandler extends DefaultHandler {
 	else if (ITEM_ENCLOSURE_TAG.equals(localName)) {
 	    try {
 		currentEntry.length = Integer.valueOf(attributes.getValue(ITEM_LENGTH_ATTRIBUTE));
+		currentEntry.mp3url = attributes.getValue(ITEM_MP3_URL_ATTRIBUTE);
 	    }
 	    catch (Exception e) {
 		currentEntry.length = 0;
