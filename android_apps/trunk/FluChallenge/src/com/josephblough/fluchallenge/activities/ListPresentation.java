@@ -218,13 +218,13 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 	    if (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) == null)
 		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
 	    else
-		return Feed.FEED_FLU_PAGES;
+		return SyndicatedFeed.FLU_PAGES_TOPIC_ID;
 	}
 	else if (CDC_FEATURE_TITLE.equals(title)) {
 	    if (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) == null)
 		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
 	    else
-		return Feed.FEED_CDC_PAGES;
+		return SyndicatedFeed.CDC_PAGES_TOPIC_ID;
 	}
 	else {
 	    for (Entry<Integer, SyndicatedFeed> entry : app.syndicatedFeeds.entrySet()) {

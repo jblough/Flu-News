@@ -5,8 +5,8 @@ Long click menu
     share link - DONE
     download podcast
     play podcast - DONE
-    related topics
-Launch related feeds menu (syndicated)
+    related topics - DONE
+Launch related feeds menu (syndicated) - DONE
 refresh feeds menu items
 Some links go to PDf files ??
 Errors downloading podcasts should remove the progress indicator

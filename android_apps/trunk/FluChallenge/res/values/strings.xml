@@ -15,4 +15,5 @@
     <string name="context_menu_play_podcast_label">Play Podcast</string>
     <string name="context_menu_share_link_label">Share Link</string>
     <string name="context_menu_related_topics_label">Related Topics</string>
+    <string name="related_topics_name">Related Topics</string>
 </resources>

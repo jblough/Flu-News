@@ -2,24 +2,33 @@ package com.josephblough.fluchallenge.activities;
 
 import java.util.List;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.os.Messenger;
 import android.view.ContextMenu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.data.Feed;
 import com.josephblough.fluchallenge.data.FeedEntry;
-import com.josephblough.fluchallenge.data.SyndicatedFeed;
+import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
 
 public class GenericFeedActivity extends FeedListActivity {
 
     public final static String FEED_EXTRA = "GenericFeedActivity.feed";
     public final static String TITLE_EXTRA = "GenericFeedActivity.title";
     
+    private ProgressDialog progress = null;
+    private final String ERROR_MSG = "There was an error downloading the feed";
+
     private int feed;
     private String title;
     
@@ -33,7 +42,10 @@ public class GenericFeedActivity extends FeedListActivity {
         if (this.title != null)
             setTitle(this.title);
         
-        renderFeed();
+        if (getFeed() == null)
+            retrieveFeed();
+        else
+            renderFeed();
     }
 
     private void renderFeed() {
@@ -50,15 +62,10 @@ public class GenericFeedActivity extends FeedListActivity {
 	    if (this.title == null)
 		setTitle(app.fluPodcastsFeed.title);
 	    break;
-	case Feed.FEED_FLU_PAGES:
-	    adapter = new RssFeedEntryAdapter(this, app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID).items);
+	default: 
+	    adapter = new RssFeedEntryAdapter(this, app.syndicatedFeeds.get(feed).items);
 	    if (this.title == null)
-		setTitle(app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID).title);
-	    break;
-	case Feed.FEED_CDC_PAGES:
-	    adapter = new RssFeedEntryAdapter(this, app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID).items);
-	    if (this.title == null)
-		setTitle(app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID).title);
+		setTitle(app.syndicatedFeeds.get(feed).title);
 	    break;
 	};
 	
@@ -74,10 +81,6 @@ public class GenericFeedActivity extends FeedListActivity {
         case Feed.FEED_FLU_UPDATES:
             getMenuInflater().inflate(R.menu.feed_list_item_menu, menu);
             break;
-        case Feed.FEED_FLU_PAGES:
-        case Feed.FEED_CDC_PAGES:
-            getMenuInflater().inflate(R.menu.syndicated_feed_list_item_menu, menu);
-            break;
         default:
             getMenuInflater().inflate(R.menu.syndicated_feed_list_item_menu, menu);
             break;
@@ -86,23 +89,27 @@ public class GenericFeedActivity extends FeedListActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
 
-        switch (item.getItemId()) {
-        case R.id.context_menu_share_link:
-            Intent intent = new Intent(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, getFeed().get(info.position).link);
-            startActivity(Intent.createChooser(intent,"Share using"));
-            return true;
-        case R.id.context_menu_view:
-            visitLink(getFeed().get(info.position));
-            return true;
-        case R.id.context_menu_related_topics:
-            return true;
-        };
+	switch (item.getItemId()) {
+	case R.id.context_menu_share_link:
+	    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
+	    sharingIntent.setType("text/plain");
+	    sharingIntent.putExtra(Intent.EXTRA_TEXT, getFeed().get(info.position).link);
+	    startActivity(Intent.createChooser(sharingIntent,"Share using"));
+	    return true;
+	case R.id.context_menu_view:
+	    visitLink(getFeed().get(info.position));
+	    return true;
+	case R.id.context_menu_related_topics:
+	    Intent topicIntent = new Intent(this, SyndicatedFeedTopicsActivity.class);
+	    topicIntent.putExtra(SyndicatedFeedTopicsActivity.FEED_TOPIC_EXTRA, feed);
+	    topicIntent.putExtra(SyndicatedFeedTopicsActivity.FEED_INDEX_EXTRA, info.position);
+	    startActivity(topicIntent);
+	    return true;
+	};
 
-        return super.onContextItemSelected(item);
+	return super.onContextItemSelected(item);
     }
     
     private List<FeedEntry> getFeed() {
@@ -113,12 +120,41 @@ public class GenericFeedActivity extends FeedListActivity {
 	    return app.fluUpdatesFeed.items;
 	case Feed.FEED_FLU_PODCASTS:
 	    return app.fluPodcastsFeed.items;
-	case Feed.FEED_FLU_PAGES:
-	    return app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID).items;
-	case Feed.FEED_CDC_PAGES:
-	    return app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID).items;
 	default:
 	    return (app.syndicatedFeeds.containsKey(feed)) ? app.syndicatedFeeds.get(feed).items : null;
 	}
+    }
+    
+    private void retrieveFeed() {
+	Intent intent = new Intent(this, SyndicatedFeedDownloaderService.class);
+	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, this.feed);
+	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(ERROR_MSG);
+			}
+		    }
+		}));
+	startService(intent);
+
+	progress = ProgressDialog.show(this, "", "Downloading " + title + " feed");
+    }
+    
+    private void done() {
+	if (progress != null)
+	    progress.dismiss();
+	
+	renderFeed();
+    }
+    
+    private void error(final String error) {
+	if (progress != null)
+	    progress.dismiss();
+	
+	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
     }
 }

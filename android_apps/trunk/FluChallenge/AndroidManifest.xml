@@ -38,6 +38,9 @@
         <activity android:name=".activities.GenericFeedActivity"
                   android:label="@string/app_name" />
 
+        <activity android:name=".activities.SyndicatedFeedTopicsActivity"
+                  android:label="@string/related_topics_name" />
+
 
         <service android:name=".services.FluActivityReportDownloaderService" 
                 android:enabled="true" />
