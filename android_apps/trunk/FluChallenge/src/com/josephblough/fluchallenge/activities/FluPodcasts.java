@@ -16,6 +16,8 @@ import android.os.Messenger;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -127,5 +129,23 @@ public class FluPodcasts extends FeedListActivity {
         };
 
         return super.onContextItemSelected(item);
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.feed_menu, menu);
+	return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.menu_item_refresh:
+	    refreshFeeds();
+	    break;
+	}
+	return super.onOptionsItemSelected(item);
+    }
+    
+    private void refreshFeeds() {
+	loadFluPodcastsFeed();
     }
 }

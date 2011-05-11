@@ -1,6 +1,7 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.data.SyndicatedFeed;
 import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
 
@@ -12,6 +13,9 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.Toast;
 
 public class FluPages extends FeedListActivity {
@@ -65,5 +69,23 @@ public class FluPages extends FeedListActivity {
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	RssFeedEntryAdapter adapter = new RssFeedEntryAdapter(this, app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID).items);
 	setListAdapter(adapter);
+    }
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.feed_menu, menu);
+	return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.menu_item_refresh:
+	    refreshFeeds();
+	    break;
+	}
+	return super.onOptionsItemSelected(item);
+    }
+    
+    private void refreshFeeds() {
+	loadFluPagesFeed();
     }
 }

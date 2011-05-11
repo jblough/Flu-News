@@ -11,6 +11,8 @@ import android.os.Message;
 import android.os.Messenger;
 import android.view.ContextMenu;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -159,5 +161,24 @@ public class GenericFeedActivity extends FeedListActivity {
 	Toast toast = Toast.makeText(this, error, Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.BOTTOM, 0, 0);
 	toast.show();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.feed_menu, menu);
+	return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.menu_item_refresh:
+	    refreshFeeds();
+	    break;
+	}
+	return super.onOptionsItemSelected(item);
+    }
+    
+    private void refreshFeeds() {
+	retrieveFeed();
     }
 }

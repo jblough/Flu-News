@@ -16,4 +16,5 @@
     <string name="context_menu_share_link_label">Share Link</string>
     <string name="context_menu_related_topics_label">Related Topics</string>
     <string name="related_topics_name">Related Topics</string>
+    <string name="menu_item_refresh_label">Refresh</string>
 </resources>
