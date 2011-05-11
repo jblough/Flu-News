@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.view.Gravity;
 import android.widget.Toast;
 
 public class FluUpdates extends FeedListActivity {
@@ -49,7 +50,9 @@ public class FluUpdates extends FeedListActivity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+	Toast toast = Toast.makeText(this, error, Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.BOTTOM, 0, 0);
+	toast.show();
     }
     
     private void done() {

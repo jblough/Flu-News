@@ -15,6 +15,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -67,7 +68,9 @@ public class FluPodcasts extends FeedListActivity {
 	if (progress != null)
 	    progress.dismiss();
 	
-	Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+	Toast toast = Toast.makeText(this, error, Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.BOTTOM, 0, 0);
+	toast.show();
     }
     
     private void done() {
@@ -108,8 +111,6 @@ public class FluPodcasts extends FeedListActivity {
         ApplicationController app = (ApplicationController)getApplicationContext();
 
         switch (item.getItemId()) {
-        case R.id.context_menu_download:
-            return true;
         case R.id.context_menu_play_podcast:
             app.playPodcast(info.position);
             refreshList();

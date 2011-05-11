@@ -22,6 +22,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -152,8 +153,11 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 	Log.d(TAG, "onItemClick: " + feedTitle);
 	if (FLU_ACTIVIY_TITLE.equals(feedTitle)) {
 	    ApplicationController app = (ApplicationController)getApplicationContext();
-	    if (app.fluReport == null)
-		Toast.makeText(this, feedTitle + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.fluReport == null) {
+		Toast toast = Toast.makeText(this, feedTitle + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    else {
 		Intent intent = new Intent(this, FluActivityReport.class);
 		startActivity(intent);
@@ -162,7 +166,9 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 	else if (FLU_PODCASTS_TITLE.equals(feedTitle)) {
 	    ApplicationController app = (ApplicationController)getApplicationContext();
 	    if (app.fluPodcastsFeed == null) {
-		Toast.makeText(this, feedTitle + " still loading...", Toast.LENGTH_LONG).show();
+		Toast toast = Toast.makeText(this, feedTitle + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
 	    }
 	    else {
 		Intent intent = new Intent(this, FluPodcasts.class);
@@ -197,32 +203,47 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	
 	if (FLU_ACTIVIY_TITLE.equals(title)) {
-	    if (app.fluReport == null)
-		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.fluReport == null) {
+		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    //else
 		//return app.fluReport;
 	}
 	else if (FLU_UPDATES_TITLE.equals(title)) {
-	    if (app.fluUpdatesFeed == null)
-		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.fluUpdatesFeed == null) {
+		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    else
 		return Feed.FEED_FLU_UPDATES;
 	}
 	else if (FLU_PODCASTS_TITLE.equals(title)) {
-	    if (app.fluPodcastsFeed == null)
-		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.fluPodcastsFeed == null) {
+		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    else
 		return Feed.FEED_FLU_PODCASTS;
 	}
 	else if (FLU_PAGES_TITLE.equals(title)) {
-	    if (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) == null)
-		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) == null) {
+		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    else
 		return SyndicatedFeed.FLU_PAGES_TOPIC_ID;
 	}
 	else if (CDC_FEATURE_TITLE.equals(title)) {
-	    if (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) == null)
-		Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG).show();
+	    if (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) == null) {
+		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		toast.setGravity(Gravity.BOTTOM, 0, 0);
+		toast.show();
+	    }
 	    else
 		return SyndicatedFeed.CDC_PAGES_TOPIC_ID;
 	}
@@ -269,7 +290,9 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
     }
     
     private void error(final String rowLabel) {
-	Toast.makeText(this, ERROR_MSG.replace("%s", rowLabel), Toast.LENGTH_LONG).show();
+	Toast toast = Toast.makeText(this, ERROR_MSG.replace("%s", rowLabel), Toast.LENGTH_LONG);
+	toast.setGravity(Gravity.BOTTOM, 0, 0);
+	toast.show();
     }
     
     private class FeedListingAdapter extends ArrayAdapter<String> {
