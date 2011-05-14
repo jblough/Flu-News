@@ -11,11 +11,13 @@ import com.josephblough.fluchallenge.data.SyndicatedFeed;
 
 import android.app.Application;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnBufferingUpdateListener;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.util.Log;
+import android.widget.Toast;
 
-public class ApplicationController extends Application implements OnCompletionListener, OnPreparedListener {
+public class ApplicationController extends Application implements OnCompletionListener, OnPreparedListener, OnBufferingUpdateListener {
 
     private final static String TAG = "ApplicationController";
 
@@ -36,12 +38,18 @@ public class ApplicationController extends Application implements OnCompletionLi
 	player = new MediaPlayer();
 	player.setOnCompletionListener(this);
 	player.setOnPreparedListener(this);
+	player.setOnBufferingUpdateListener(this);
     }
-    
+
+    @Override
     public void onTerminate () {
-	player.release();
+	if (player != null) {
+	    if (player.isPlaying()) {
+		player.stop();
+	    }
+	    player.release();
+	}
     }
-    
     
     public void playPodcast(final int position) {
 	if (fluPodcastsFeed != null && fluPodcastsFeed.items != null && fluPodcastsFeed.items.size() > 0) {
@@ -51,7 +59,7 @@ public class ApplicationController extends Application implements OnCompletionLi
 		Log.d(TAG, "Downloading " + entry.mp3url);
 		player.reset();
 		player.setDataSource(entry.mp3url);
-		player.prepareAsync();
+		player.prepare();
 	    }
 	    catch (Exception e) {
 		Log.e(TAG, e.getMessage(), e);
@@ -65,13 +73,15 @@ public class ApplicationController extends Application implements OnCompletionLi
 	    player.stop();
 	}
 	
-	if (activityToUpdateOnPlayCompletion != null) {
+	/*if (activityToUpdateOnPlayCompletion != null) {
 	    activityToUpdateOnPlayCompletion.refreshList();
-	}
+	}*/
     }
 
     public void onPrepared(MediaPlayer player) {
-	player.start();
+	if (currentlyPlayingPodcast != null) {
+	    player.start();
+	}
     }
 
     public void onCompletion(MediaPlayer player) {
@@ -87,5 +97,9 @@ public class ApplicationController extends Application implements OnCompletionLi
 	    return null;
 	
 	return (PodcastFeedEntry)fluPodcastsFeed.items.get(currentlyPlayingPodcast);
+    }
+
+    public void onBufferingUpdate(MediaPlayer player, int percent) {
+	Toast.makeText(this, "Buffering complete: " + percent + "%", Toast.LENGTH_SHORT);
     }
 }

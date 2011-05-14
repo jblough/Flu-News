@@ -9,16 +9,16 @@ Launch related feeds menu (syndicated) - DONE
 refresh feeds menu items - DONE
 Some links go to PDf files ?? - Nothing can be done.  Maybe alert the user somehow?
 Errors downloading feeds should remove the progress indicator
-Integrate SVG rendering
-Flu activity screen
-Flu activity screen map rendering
+Flu activity screen - DONE
+Flu activity screen map rendering - DONE
 Change stop playing podcast image from pause to stop (square)
 Share links - DONE
 Icons
+Download podcast (if the audio downloads directory can be determined)
 
 Nice to have:
 Podcast listview format - DONE
 Work on caching download for less studder
 desktop shortcuts/widgets
 ability to search/filter feeds
-update podcast list row after podcast is finished playing - DONE
+update podcast list row after podcast is finished playing
