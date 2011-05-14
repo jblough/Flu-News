@@ -108,7 +108,7 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 				app.playPodcast(position);
 			    }
 			}).start();
-			Toast toast = Toast.makeText(activity, "Downloading podcast", Toast.LENGTH_SHORT);
+			Toast toast = Toast.makeText(activity, "Downloading podcast", Toast.LENGTH_LONG);
 			toast.setGravity(Gravity.BOTTOM, 0, 0);
 			toast.show();
 		    }

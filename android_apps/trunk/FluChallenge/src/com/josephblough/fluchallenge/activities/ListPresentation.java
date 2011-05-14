@@ -40,11 +40,11 @@ import android.widget.Toast;
 public class ListPresentation extends ListActivity implements OnItemSelectedListener, OnItemClickListener {
 
     private final static String TAG = "ListPresentation";
-    private final static String FLU_ACTIVIY_TITLE = "Flu Activity Report"; 
-    private final static String FLU_UPDATES_TITLE = "Flu Updates"; 
-    private final static String FLU_PODCASTS_TITLE = "Flu Podcasts"; 
-    private final static String FLU_PAGES_TITLE = "Flu Pages"; 
-    private final static String CDC_FEATURE_TITLE = "CDC Feature Pages"; 
+    public final static String FLU_ACTIVIY_TITLE = "Flu Activity Report"; 
+    public final static String FLU_UPDATES_TITLE = "Flu Updates"; 
+    public final static String FLU_PODCASTS_TITLE = "Flu Podcasts"; 
+    public final static String FLU_PAGES_TITLE = "Flu Pages"; 
+    public final static String CDC_FEATURE_TITLE = "CDC Feature Pages"; 
     
     private final String ERROR_MSG = "There was an error downloading the %s feed";
     
@@ -85,7 +85,7 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 			if (message.arg1 == Activity.RESULT_OK) {
 			    done();
 			} else {
-			    error(FLU_ACTIVIY_TITLE);
+			    error(FLU_UPDATES_TITLE);
 			}
 		    }
 		}));
@@ -100,7 +100,7 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 			if (message.arg1 == Activity.RESULT_OK) {
 			    done();
 			} else {
-			    error(FLU_ACTIVIY_TITLE);
+			    error(FLU_PODCASTS_TITLE);
 			}
 		    }
 		}));
@@ -116,7 +116,7 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 			if (message.arg1 == Activity.RESULT_OK) {
 			    done();
 			} else {
-			    error(FLU_ACTIVIY_TITLE);
+			    error(FLU_PAGES_TITLE);
 			}
 		    }
 		}));
@@ -132,7 +132,7 @@ public class ListPresentation extends ListActivity implements OnItemSelectedList
 			if (message.arg1 == Activity.RESULT_OK) {
 			    done();
 			} else {
-			    error(FLU_ACTIVIY_TITLE);
+			    error(CDC_FEATURE_TITLE);
 			}
 		    }
 		}));

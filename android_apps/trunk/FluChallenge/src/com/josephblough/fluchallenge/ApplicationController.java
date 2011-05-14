@@ -3,6 +3,7 @@ package com.josephblough.fluchallenge;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.josephblough.fluchallenge.activities.FluPodcasts;
 import com.josephblough.fluchallenge.data.Feed;
 import com.josephblough.fluchallenge.data.FluReport;
 import com.josephblough.fluchallenge.data.PodcastFeedEntry;
@@ -23,6 +24,7 @@ public class ApplicationController extends Application implements OnCompletionLi
     public Feed fluPodcastsFeed;
     public Map<Integer, SyndicatedFeed> syndicatedFeeds = new HashMap<Integer, SyndicatedFeed>();
     public Integer currentlyPlayingPodcast = null;
+    public FluPodcasts activityToUpdateOnPlayCompletion = null;
 
     private MediaPlayer player = null;
 
@@ -49,7 +51,7 @@ public class ApplicationController extends Application implements OnCompletionLi
 		Log.d(TAG, "Downloading " + entry.mp3url);
 		player.reset();
 		player.setDataSource(entry.mp3url);
-		player.prepare();
+		player.prepareAsync();
 	    }
 	    catch (Exception e) {
 		Log.e(TAG, e.getMessage(), e);
@@ -62,6 +64,10 @@ public class ApplicationController extends Application implements OnCompletionLi
 	if (player.isPlaying()) {
 	    player.stop();
 	}
+	
+	if (activityToUpdateOnPlayCompletion != null) {
+	    activityToUpdateOnPlayCompletion.refreshList();
+	}
     }
 
     public void onPrepared(MediaPlayer player) {
@@ -70,6 +76,10 @@ public class ApplicationController extends Application implements OnCompletionLi
 
     public void onCompletion(MediaPlayer player) {
 	currentlyPlayingPodcast = null;
+	
+	if (activityToUpdateOnPlayCompletion != null) {
+	    activityToUpdateOnPlayCompletion.refreshList();
+	}
     }
     
     public PodcastFeedEntry getCurrentlyPlayingPodcast() {

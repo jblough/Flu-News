@@ -4,17 +4,28 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent" android:orientation="vertical">
     <TextView android:id="@+id/flu_activity_week_label" 
-        android:text="Week 1" 
+        android:text="Week Ending October 09, 2010- Week 40" 
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content" 
         android:paddingLeft="5dip" 
-        android:paddingRight="5dip" />
+        android:paddingRight="5dip"
+        android:layout_gravity="center_horizontal" />
     <SeekBar android:id="@+id/flu_activity_week_seekbar" 
         android:layout_height="wrap_content" 
         android:layout_width="match_parent" 
         android:paddingLeft="5dip" 
-        android:paddingRight="5dip" />
-    <WebView android:id="@+id/flu_activity_map" 
-        android:layout_width="match_parent" 
-        android:layout_height="match_parent" />
+        android:paddingRight="5dip"
+        android:layout_gravity="center_horizontal" />
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView android:id="@+id/flu_activity_key_1_label"
+            android:text="Map Key Here..."
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+    <ImageView android:id="@+id/flu_activity_map" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_gravity="top" />
 </LinearLayout>

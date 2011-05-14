@@ -80,6 +80,7 @@ public class FluPodcasts extends FeedListActivity {
 	    progress.dismiss();
 	
 	ApplicationController app = (ApplicationController)getApplicationContext();
+	setTitle(app.fluPodcastsFeed.title);
 	PodcastFeedEntryAdapter adapter = new PodcastFeedEntryAdapter(this, app.fluPodcastsFeed.items);
 	setListAdapter(adapter);
     }
@@ -147,5 +148,23 @@ public class FluPodcasts extends FeedListActivity {
     
     private void refreshFeeds() {
 	loadFluPodcastsFeed();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        // Register to be notified the the podcast finishes playing
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	app.activityToUpdateOnPlayCompletion = this;
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        
+        // Unregister to be notified the the podcast finishes playing
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	app.activityToUpdateOnPlayCompletion = null;
     }
 }
