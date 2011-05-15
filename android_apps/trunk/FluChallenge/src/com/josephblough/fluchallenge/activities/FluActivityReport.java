@@ -35,31 +35,44 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     private final static String TAG = "FluActivityReport";
 
     private ProgressDialog progress = null;
-    private final String ERROR_MSG = "There was an error downloading the Flu report";
-    private final String IMAGE_URL = "http://www.cdc.gov/flu/weekly/%ARCHIVE_DIRECTORY%/images/%IMAGE_FILENAME%";
-    private final String IMAGE_DIRECTORY_PLACEHOLDER = "%ARCHIVE_DIRECTORY%";
-    private final String IMAGE_FILENAME_PLACEHOLDER = "%IMAGE_FILENAME%";
+    private static final String ERROR_MSG = "There was an error downloading the Flu report";
+    private static final String IMAGE_URL = "http://www.cdc.gov/flu/weekly/%ARCHIVE_DIRECTORY%/images/%IMAGE_FILENAME%";
+    private static final String IMAGE_DIRECTORY_PLACEHOLDER = "%ARCHIVE_DIRECTORY%";
+    private static final String IMAGE_FILENAME_PLACEHOLDER = "%IMAGE_FILENAME%";
+    private static final String SAVED_CURRENT_PERIOD = "FluActivityReport.savedCurrentPeriod";
+    private static final String SAVED_CURRENT_BITMAP = "FluActivityReport.savedCurrentBitmap";
     
-    TextView mapTitle = null;
-    SeekBar periodSeekbar = null;
-    ImageView mapImage = null;
-    Map<Integer, Bitmap> imageCache; 
+    private TextView mapTitle = null;
+    private SeekBar periodSeekbar = null;
+    private ImageView mapImage = null;
+    private Map<Integer, Bitmap> imageCache;
+    private Integer savedImageIndex = null;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
+
+	this.imageCache = new HashMap<Integer, Bitmap>();
+        
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(SAVED_CURRENT_PERIOD)) {
+        	this.savedImageIndex = savedInstanceState.getInt(SAVED_CURRENT_PERIOD);
+                if (savedInstanceState.containsKey(SAVED_CURRENT_BITMAP)) {
+                    Bitmap currentBitmap = savedInstanceState.getParcelable(SAVED_CURRENT_BITMAP);
+                    if (this.savedImageIndex != null && currentBitmap != null) {
+                	imageCache.put(this.savedImageIndex, currentBitmap);
+                    }
+                }
+            }
+        }
         
         setContentView(R.layout.flu_activity_report);
 
         this.mapTitle = (TextView) findViewById(R.id.flu_activity_week_label);
 	this.periodSeekbar = (SeekBar) findViewById(R.id.flu_activity_week_seekbar);
 	this.mapImage = (ImageView) findViewById(R.id.flu_activity_map);
-	this.imageCache = new HashMap<Integer, Bitmap>();
-        
-	ApplicationController app = (ApplicationController)getApplicationContext();
-	if (app.fluReport != null)
-	    done();
-	else
-	    loadFluActivityReport();
+
+	this.periodSeekbar.setOnSeekBarChangeListener(this);
     }
     
     private void loadFluActivityReport() {
@@ -69,6 +82,7 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 		    @Override
 		    public void handleMessage(Message message) {
 			if (message.arg1 == Activity.RESULT_OK) {
+			    //Log.d(TAG, "loadFluActivityReport handleMessage");
 			    done();
 			} else {
 			    error(ERROR_MSG);
@@ -95,64 +109,34 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	
 	setTitle(ListPresentation.FLU_ACTIVIY_TITLE);
 	final ApplicationController app = (ApplicationController)getApplicationContext();
-	final TimePeriod finalPeriod = app.fluReport.periods.get(app.fluReport.periods.size()-1);
+	this.periodSeekbar.setMax(app.fluReport.periods.size()-1);
 
-	mapTitle.setText(finalPeriod.subtitle);
+	int currentPeriod = (this.savedImageIndex == null) ? app.fluReport.periods.size()-1 : this.savedImageIndex.intValue();
+	this.savedImageIndex = null;
 	
-	periodSeekbar.setMax(app.fluReport.periods.size()-1);
-	periodSeekbar.setProgress(app.fluReport.periods.size());
-	periodSeekbar.setOnSeekBarChangeListener(this/*new OnSeekBarChangeListener() {
-	    
-	    public void onStopTrackingTouch(SeekBar seekBar) {
-		    TimePeriod period = app.fluReport.periods.get(seekBar.getProgress());
-		    mapTitle.setText(period.subtitle);
-		    updateImage(period);
-	    }
-	    
-	    public void onStartTrackingTouch(SeekBar seekBar) {
-	    }
-	    
-	    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-		TimePeriod period = app.fluReport.periods.get(progress);
-		mapTitle.setText(period.subtitle);
-	    }
-	}*/);
+	//Log.d(TAG, "Max: " + (app.fluReport.periods.size()-1) + ", Current: " + currentPeriod);
+	final TimePeriod period = app.fluReport.periods.get(currentPeriod);
 
-	updateImage(finalPeriod);
+	this.mapTitle.setText(period.subtitle);
 	
+	this.periodSeekbar.setProgress(currentPeriod);
+
+	if (imageCache.containsKey(currentPeriod) && imageCache.get(Integer.valueOf(currentPeriod)) != null) {
+	    done(imageCache.get(currentPeriod));
+	}
+	else {
+	    //Log.d(TAG, "done -> updateImage");
+	    updateImage(period);
+	}
     }
 
     private void updateImage(TimePeriod period) {
-	Log.d(TAG, "Displaying progress dialog");
-	//ProgressDialog downloadProgress = ProgressDialog.show(this, "", "Downloading map image...", false, false);
 	progress = ProgressDialog.show(this, "", "Downloading map image...");
-	/*
-	try {
-	    //map.setVisibility(View.INVISIBLE);
-	    //Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.usa_states_gray);
-	    String archiveDirectory = "weeklyarchives" + (period.year-1) + "-" + period.year;
-	    String imageFilename = "usmap" + period.number + ".jpg";
-	    //Bitmap bitmap = getBitmapFromURL("http://www.cdc.gov/flu/weekly/" + archiveDirectory + "/images/" + imageFilename);
-	    String imageUrl = 
-		IMAGE_URL.replace(IMAGE_DIRECTORY_PLACEHOLDER, archiveDirectory).replace(IMAGE_FILENAME_PLACEHOLDER, imageFilename);
-	    Bitmap bitmap = getBitmapFromURL(imageUrl);
-	    mapImage.setImageBitmap(bitmap);
-	    //map.setVisibility(View.VISIBLE);
-	}
-	catch (Exception e) {
-	    Log.e(TAG, e.getMessage(), e);
-	}
-	*/
 	String archiveDirectory = "weeklyarchives" + (period.year-1) + "-" + period.year;
 	String imageFilename = "usmap" + period.number + ".jpg";
-	//Bitmap bitmap = getBitmapFromURL("http://www.cdc.gov/flu/weekly/" + archiveDirectory + "/images/" + imageFilename);
 	String imageUrl = 
 	    IMAGE_URL.replace(IMAGE_DIRECTORY_PLACEHOLDER, archiveDirectory).replace(IMAGE_FILENAME_PLACEHOLDER, imageFilename);
 	new TimePeriodImageDownloaderTask(this).execute(imageUrl);
-	
-	//Log.d(TAG, "Dismissing progress dialog");
-	//downloadProgress.dismiss();
-	//progress.dismiss();
     }
     
     public static Bitmap getBitmapFromURL(String src) {
@@ -180,8 +164,10 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
             toast.show();
 	}
 	else {
-	    mapImage.setImageBitmap(bitmap);
-	    imageCache.put(periodSeekbar.getProgress(), bitmap);
+	    if (bitmap != null) {
+		mapImage.setImageBitmap(bitmap);
+		imageCache.put(periodSeekbar.getProgress(), bitmap);
+	    }
 	}
     }
     
@@ -200,11 +186,42 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	final ApplicationController app = (ApplicationController)getApplicationContext();
 	TimePeriod period = app.fluReport.periods.get(seekBar.getProgress());
 	mapTitle.setText(period.subtitle);
-	if (imageCache.containsKey(seekBar.getProgress())) {
+	if (imageCache.containsKey(seekBar.getProgress()) &&
+		imageCache.get(seekBar.getProgress()) != null) {
 	    done(imageCache.get(seekBar.getProgress()));
 	}
 	else {
+	    //Log.d(TAG, "onStopTrackingTouch -> updateImage");
 	    updateImage(period);
 	}
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        
+        //Log.d(TAG, "onResume");
+        
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	if (app.fluReport != null)
+	    done();
+	else
+	    loadFluActivityReport();
+    }
+    
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        
+        outState.putInt(SAVED_CURRENT_PERIOD, this.periodSeekbar.getProgress());
+        Bitmap currentBitmap = this.imageCache.get(Integer.valueOf(this.periodSeekbar.getProgress()));
+        if (currentBitmap != null) {
+            outState.putParcelable(SAVED_CURRENT_BITMAP, currentBitmap);
+        }
     }
 }
