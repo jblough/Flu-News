@@ -37,7 +37,7 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 	super(activity, R.layout.podcast_row, entries);
 	this.activity = activity;
 	this.playImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_media_play);
-	this.stopImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_media_pause);
+	this.stopImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_media_stop);
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
