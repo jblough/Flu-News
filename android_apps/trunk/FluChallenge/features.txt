@@ -14,7 +14,7 @@ Flu activity screen map rendering - DONE
 Change stop playing podcast image from pause to stop (square)
 Share links - DONE
 Icons
-Download podcast (if the audio downloads directory can be determined)
+Download podcast (if the audio downloads directory can be determined) - DONE
 
 Nice to have:
 Podcast listview format - DONE

@@ -3,7 +3,9 @@ package com.josephblough.fluchallenge.activities;
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.data.FeedEntry;
+import com.josephblough.fluchallenge.data.PodcastFeedEntry;
 import com.josephblough.fluchallenge.services.FluPodcastsFeedDownloaderService;
+import com.josephblough.fluchallenge.services.PodcastDownloaderService;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -127,10 +129,14 @@ public class FluPodcasts extends FeedListActivity {
         case R.id.context_menu_view:
             visitLink(app.fluPodcastsFeed.items.get(info.position));
             return true;
+        case R.id.context_menu_download:
+            downloadPodcast((PodcastFeedEntry)app.fluPodcastsFeed.items.get(info.position));
+            return true;
         };
 
         return super.onContextItemSelected(item);
     }
+    
     public boolean onCreateOptionsMenu(Menu menu) {
 	MenuInflater inflater = getMenuInflater();
 	inflater.inflate(R.menu.feed_menu, menu);
@@ -166,5 +172,17 @@ public class FluPodcasts extends FeedListActivity {
         // Unregister to be notified the the podcast finishes playing
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	app.activityToUpdateOnPlayCompletion = null;
+    }
+    
+    private void downloadPodcast(PodcastFeedEntry entry) {
+	Intent intent = new Intent(this, PodcastDownloaderService.class);
+	intent.putExtra(PodcastDownloaderService.EXTRA_URL, entry.mp3url);
+	intent.putExtra(PodcastDownloaderService.EXTRA_TITLE, entry.title);
+	startService(intent);
+
+	Toast toast = Toast.makeText(this, "Downloading podcast", 
+		Toast.LENGTH_SHORT);
+	toast.setGravity(Gravity.BOTTOM, 0, 0);
+	toast.show();
     }
 }
