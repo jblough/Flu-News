@@ -17,7 +17,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
-public class PodcastDownloaderService extends IntentService {
+public class PodcastDownloaderService extends IntentService implements MediaScannerConnectionClient {
 
     private final static String TAG = "PodcastDownloaderService";
 
@@ -25,6 +25,9 @@ public class PodcastDownloaderService extends IntentService {
 
     public static final String EXTRA_URL = "PodcastDownloaderService.url";
     public static final String EXTRA_TITLE = "PodcastDownloaderService.title";
+    
+    private MediaScannerConnection scanner = null;
+    private String fileToScan = null;
 
     public PodcastDownloaderService() {
 	super("PodcastDownloaderService");
@@ -44,7 +47,7 @@ public class PodcastDownloaderService extends IntentService {
 	    File podcastDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PODCASTS);
 	    podcastDirectory.mkdirs();
 	    File outputFile = new File(podcastDirectory, filename);
-	    Log.d(TAG, "Saving " + url + " to " + outputFile.getAbsolutePath());
+	    //Log.d(TAG, "Saving " + url + " to " + outputFile.getAbsolutePath());
 
 	    URL u = new URL(url);
 	    HttpURLConnection c = (HttpURLConnection) u.openConnection();
@@ -73,8 +76,12 @@ public class PodcastDownloaderService extends IntentService {
 	    catch (NumberFormatException e) {
 		
 	    }
+	    
+	    this.fileToScan = outputFile.getAbsolutePath();
+	    this.scanner = new MediaScannerConnection(getApplication(), this);
+	    scanner.connect();
+	    
 	    sendNotification(notificationId, title);
-	    new PodcastDownloaderMediaScannerClient(outputFile.getAbsolutePath());
 	}
 	catch (Exception e) {
 	    Log.e(TAG, e.getMessage(), e);
@@ -94,24 +101,14 @@ public class PodcastDownloaderService extends IntentService {
 	mgr.notify(NOTIFICATION + id, notification);
     }
 
-    private class PodcastDownloaderMediaScannerClient implements MediaScannerConnectionClient {
+    public void onMediaScannerConnected() {
+	this.scanner.scanFile(this.fileToScan, "audio/mpeg");
+    }
 
-	private String path;
-	private MediaScannerConnection connection;
-
-	public PodcastDownloaderMediaScannerClient(final String path) {
-	    this.path = path;
-	    this.connection = new MediaScannerConnection(PodcastDownloaderService.this, this);
-	    this.connection.connect();
-	}
-	public void onMediaScannerConnected() {
-	    Log.d(TAG, "Scanning " + path);
-	    connection.scanFile(path, "audio/mpeg");
-	}
-
-	public void onScanCompleted(String path, Uri uri) {
-	    // TODO Auto-generated method stub
-
-	}
+    public void onScanCompleted(String path, Uri uri) {
+	    if (this.scanner.isConnected()) {
+		//Log.d(TAG, "onScanCompleted - Disconnecting");
+		this.scanner.disconnect();
+	    }
     }
 }
