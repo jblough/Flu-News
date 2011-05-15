@@ -29,6 +29,7 @@ public class ApplicationController extends Application implements OnCompletionLi
     public FluPodcasts activityToUpdateOnPlayCompletion = null;
 
     private MediaPlayer player = null;
+    //private StreamingMediaPlayer player = null;
 
     public void onCreate() {
 	super.onCreate();
@@ -39,6 +40,7 @@ public class ApplicationController extends Application implements OnCompletionLi
 	player.setOnCompletionListener(this);
 	player.setOnPreparedListener(this);
 	player.setOnBufferingUpdateListener(this);
+	//player = new StreamingMediaPlayer(this);	
     }
 
     @Override
@@ -48,6 +50,9 @@ public class ApplicationController extends Application implements OnCompletionLi
 		player.stop();
 	    }
 	    player.release();
+	    /*if (player.getMediaPlayer() != null && player.getMediaPlayer().isPlaying()) {
+		player.getMediaPlayer().stop();
+	    }*/
 	}
     }
     
@@ -60,6 +65,7 @@ public class ApplicationController extends Application implements OnCompletionLi
 		player.reset();
 		player.setDataSource(entry.mp3url);
 		player.prepare();
+		//player.startStreaming(entry.mp3url);
 	    }
 	    catch (Exception e) {
 		Log.e(TAG, e.getMessage(), e);
@@ -72,6 +78,9 @@ public class ApplicationController extends Application implements OnCompletionLi
 	if (player.isPlaying()) {
 	    player.stop();
 	}
+	/*if (player.getMediaPlayer() != null && player.getMediaPlayer().isPlaying()) {
+	    player.interrupt();
+	}*/
 	
 	/*if (activityToUpdateOnPlayCompletion != null) {
 	    activityToUpdateOnPlayCompletion.refreshList();

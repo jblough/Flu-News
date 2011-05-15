@@ -116,9 +116,7 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	
 	//Log.d(TAG, "Max: " + (app.fluReport.periods.size()-1) + ", Current: " + currentPeriod);
 	final TimePeriod period = app.fluReport.periods.get(currentPeriod);
-
 	this.mapTitle.setText(period.subtitle);
-	
 	this.periodSeekbar.setProgress(currentPeriod);
 
 	if (imageCache.containsKey(currentPeriod) && imageCache.get(Integer.valueOf(currentPeriod)) != null) {
