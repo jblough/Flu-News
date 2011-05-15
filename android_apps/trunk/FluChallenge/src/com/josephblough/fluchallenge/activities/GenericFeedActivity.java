@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.Menu;
@@ -26,6 +27,7 @@ import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
 
 public class GenericFeedActivity extends FeedListActivity {
 
+    public final static String TAG = "GenericFeedActivity";
     public final static String FEED_EXTRA = "GenericFeedActivity.feed";
     public final static String TITLE_EXTRA = "GenericFeedActivity.title";
     
@@ -37,6 +39,7 @@ public class GenericFeedActivity extends FeedListActivity {
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate");
 
         registerForContextMenu(getListView());
         
