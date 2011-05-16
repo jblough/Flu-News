@@ -11,16 +11,17 @@ Some links go to PDf files ?? - Nothing can be done.  Maybe alert the user someh
 Errors downloading feeds should remove the progress indicator
 Flu activity screen - DONE
 Flu activity screen map rendering - DONE
-Change stop playing podcast image from pause to stop (square)
+Change stop playing podcast image from pause to stop (square) - DONE
 Share links - DONE
-Icons
+Icons - DONE
 Download podcast (if the audio downloads directory can be determined) - DONE
 Fix download podcast connection leak - DONE
 Launch music player with downloaded podcast from notification link
+Show download progress in notification area - DONE
 
 Nice to have:
 Podcast listview format - DONE
 Work on caching download for less studder
 desktop shortcuts/widgets
-ability to search/filter feeds
-update podcast list row after podcast is finished playing
+ability to search/filter feeds ***
+update podcast list row after podcast is finished playing - DONE
