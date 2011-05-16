@@ -15,6 +15,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -57,7 +58,9 @@ public class PodcastDownloaderService extends IntentService {
 	    }
 	    catch (NumberFormatException e) {
 	    }
-	    final Notification notification = new Notification(R.drawable.stat_sys_download_anim0, "Downloading", System.currentTimeMillis());
+	    notificationId += NOTIFICATION;
+	    
+	    final Notification notification = new Notification(R.drawable.stat_sys_download_anim0, "Downloading " + title, System.currentTimeMillis());
 	    notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
 	    notification.contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.download_with_progress);
 	    Intent i = new Intent(this, NotificationActivity.class);
@@ -120,15 +123,12 @@ public class PodcastDownloaderService extends IntentService {
 
     private void sendNotification(final int id, final String title, final String filename) {
 	NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-	Notification notification = new Notification(
-		R.drawable.status_bar_icon, "Finished downloading",
-		System.currentTimeMillis());
-	Intent intent = new Intent(this, NotificationActivity.class);
-	intent.putExtra(NotificationActivity.EXTRA_FILE_URL, filename);
+	Notification notification = new Notification(R.drawable.status_bar_icon, "Finished downloading", System.currentTimeMillis());
+	Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("file://" + filename));
+
 	PendingIntent notifier = PendingIntent.getActivity(this, 0, intent, 0);
-	notification.setLatestEventInfo(this, "Download complete", "Downloaded "
-		+ title, notifier);
+	notification.setLatestEventInfo(this, "Download complete", "Downloaded " + title, notifier);
 	notification.flags = notification.flags | Notification.FLAG_AUTO_CANCEL;
-	mgr.notify(NOTIFICATION + id, notification);
+	mgr.notify(id, notification);
     }
 }
