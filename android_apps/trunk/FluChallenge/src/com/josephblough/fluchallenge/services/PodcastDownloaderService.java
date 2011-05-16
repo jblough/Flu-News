@@ -13,16 +13,13 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.media.MediaScannerConnection;
-import android.media.MediaScannerConnection.MediaScannerConnectionClient;
-import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-public class PodcastDownloaderService extends IntentService implements MediaScannerConnectionClient {
+public class PodcastDownloaderService extends IntentService {
 
     private final static String TAG = "PodcastDownloaderService";
 
@@ -31,9 +28,6 @@ public class PodcastDownloaderService extends IntentService implements MediaScan
     public static final String EXTRA_URL = "PodcastDownloaderService.url";
     public static final String EXTRA_TITLE = "PodcastDownloaderService.title";
     
-    private MediaScannerConnection scanner = null;
-    private String savedAudioFilename = null;
-
     public PodcastDownloaderService() {
 	super("PodcastDownloaderService");
     }
@@ -66,7 +60,7 @@ public class PodcastDownloaderService extends IntentService implements MediaScan
 	    notification.flags = notification.flags | Notification.FLAG_ONGOING_EVENT | Notification.FLAG_AUTO_CANCEL;
 	    notification.contentView = new RemoteViews(getApplicationContext().getPackageName(), R.layout.download_with_progress);
 	    Intent i = new Intent(this, NotificationActivity.class);
-	    i.putExtra(NotificationActivity.EXTRA_FILE_URL, this.savedAudioFilename);
+	    i.putExtra(NotificationActivity.EXTRA_FILE_URL, outputFile.getAbsolutePath());
 	    PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, i, 0);
 	    notification.contentIntent = pendingIntent;
 	    notification.contentView.setImageViewResource(R.id.download_status_icon, R.drawable.status_bar_icon);
@@ -113,40 +107,10 @@ public class PodcastDownloaderService extends IntentService implements MediaScan
 		f.close();
 	    }
 
-	    //this.savedAudioFilename = outputFile.getAbsolutePath();
-	    //this.scanner = new MediaScannerConnection(getApplication(), this);
-	    //scanner.connect();
 	    MediaScannerConnection.scanFile(getApplication(), new String[] { outputFile.getAbsolutePath() }, null, null);
-	    
-	    //sendNotification(notificationId, title);
 	}
 	catch (Exception e) {
 	    Log.e(TAG, e.getMessage(), e);
 	}
-    }
-
-    private void sendNotification(final int id, final String title) {
-	NotificationManager mgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-	Notification notification = new Notification(
-		android.R.drawable.ic_btn_speak_now, "Finished downloading",
-		System.currentTimeMillis());
-	Intent intent = new Intent(this, NotificationActivity.class);
-	intent.putExtra(NotificationActivity.EXTRA_FILE_URL, this.savedAudioFilename);
-	PendingIntent notifier = PendingIntent.getActivity(this, 0, intent, 0);
-	notification.setLatestEventInfo(this, "Download complete", "Downloaded "
-		+ title, notifier);
-	notification.flags = notification.flags | Notification.FLAG_AUTO_CANCEL;
-	mgr.notify(NOTIFICATION + id, notification);
-    }
-
-    public void onMediaScannerConnected() {
-	this.scanner.scanFile(this.savedAudioFilename, "audio/mpeg");
-    }
-
-    public void onScanCompleted(String path, Uri uri) {
-	    if (this.scanner.isConnected()) {
-		//Log.d(TAG, "onScanCompleted - Disconnecting");
-		this.scanner.disconnect();
-	    }
     }
 }
