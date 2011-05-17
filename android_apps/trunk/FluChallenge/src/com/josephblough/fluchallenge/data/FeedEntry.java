@@ -11,6 +11,6 @@ public class FeedEntry {
     
     @Override
     public String toString() {
-	return title + "\\" + description + "\\" + "\\" + date;
+	return title + "\\" + date;
     }
 }

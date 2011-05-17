@@ -41,7 +41,7 @@ public class GenericFeedActivity extends FeedListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
-
+        
         registerForContextMenu(getListView());
         
         this.feed = getIntent().getIntExtra(FEED_EXTRA, Feed.FEED_FLU_UPDATES);
