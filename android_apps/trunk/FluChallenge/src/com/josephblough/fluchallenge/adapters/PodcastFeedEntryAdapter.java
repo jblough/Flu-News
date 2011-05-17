@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.activities;
+package com.josephblough.fluchallenge.adapters;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
+import com.josephblough.fluchallenge.activities.FluPodcasts;
 import com.josephblough.fluchallenge.data.FeedEntry;
 import com.josephblough.fluchallenge.data.PodcastFeedEntry;
 
@@ -33,7 +34,7 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
     final Bitmap playImage;
     final Bitmap stopImage;
 
-    PodcastFeedEntryAdapter(FluPodcasts activity, List<FeedEntry> entries) {
+    public PodcastFeedEntryAdapter(FluPodcasts activity, List<FeedEntry> entries) {
 	super(activity, R.layout.podcast_row, entries);
 	this.activity = activity;
 	this.playImage = BitmapFactory.decodeResource(activity.getResources(), R.drawable.ic_media_play);

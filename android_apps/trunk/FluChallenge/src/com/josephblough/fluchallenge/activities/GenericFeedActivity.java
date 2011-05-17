@@ -21,6 +21,7 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
+import com.josephblough.fluchallenge.adapters.RssFeedEntryAdapter;
 import com.josephblough.fluchallenge.data.Feed;
 import com.josephblough.fluchallenge.data.FeedEntry;
 import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;

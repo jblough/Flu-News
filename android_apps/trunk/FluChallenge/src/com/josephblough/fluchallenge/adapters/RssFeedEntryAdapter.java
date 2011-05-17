@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.activities;
+package com.josephblough.fluchallenge.adapters;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,7 +23,7 @@ public class RssFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
     SimpleDateFormat outputFormatter = new SimpleDateFormat();
     Activity activity = null;
 
-    RssFeedEntryAdapter(Activity activity, List<FeedEntry> entries) {
+    public RssFeedEntryAdapter(Activity activity, List<FeedEntry> entries) {
 	super(activity, android.R.layout.simple_list_item_2, entries);
 	this.activity = activity;
     }

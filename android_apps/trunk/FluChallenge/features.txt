@@ -16,12 +16,12 @@ Share links - DONE
 Icons - DONE
 Download podcast (if the audio downloads directory can be determined) - DONE
 Fix download podcast connection leak - DONE
-Launch music player with downloaded podcast from notification link
+Launch music player with downloaded podcast from notification link - DONE
 Show download progress in notification area - DONE
 
 Nice to have:
 Podcast listview format - DONE
 Work on caching download for less studder
 desktop shortcuts/widgets
-ability to search/filter feeds ***
+ability to search/filter feeds ****
 update podcast list row after podcast is finished playing - DONE

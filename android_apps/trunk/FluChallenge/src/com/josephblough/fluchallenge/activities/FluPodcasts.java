@@ -2,6 +2,7 @@ package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
+import com.josephblough.fluchallenge.adapters.PodcastFeedEntryAdapter;
 import com.josephblough.fluchallenge.data.FeedEntry;
 import com.josephblough.fluchallenge.data.PodcastFeedEntry;
 import com.josephblough.fluchallenge.services.FluPodcastsFeedDownloaderService;

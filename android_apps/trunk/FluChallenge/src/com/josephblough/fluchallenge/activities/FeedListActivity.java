@@ -1,5 +1,6 @@
 package com.josephblough.fluchallenge.activities;
 
+import com.josephblough.fluchallenge.adapters.RssFeedEntryAdapter;
 import com.josephblough.fluchallenge.data.FeedEntry;
 
 import android.app.ListActivity;

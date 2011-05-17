@@ -1,4 +1,4 @@
-package com.josephblough.fluchallenge.activities;
+package com.josephblough.fluchallenge.adapters;
 
 import java.util.List;
 
@@ -15,6 +15,7 @@ public class SyndicatedFeedTopicAdapter extends
 	ArrayAdapter<SyndicatedFeedEntryTopic> {
 
     private Activity activity;
+    
     public SyndicatedFeedTopicAdapter(Activity activity, List<SyndicatedFeedEntryTopic> objects) {
 	super(activity, android.R.layout.simple_list_item_1, objects);
 	this.activity = activity;

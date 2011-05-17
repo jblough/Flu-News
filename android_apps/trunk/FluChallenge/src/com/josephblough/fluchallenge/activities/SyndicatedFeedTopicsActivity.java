@@ -1,6 +1,7 @@
 package com.josephblough.fluchallenge.activities;
 
 import com.josephblough.fluchallenge.ApplicationController;
+import com.josephblough.fluchallenge.adapters.SyndicatedFeedTopicAdapter;
 import com.josephblough.fluchallenge.data.SyndicatedFeed;
 import com.josephblough.fluchallenge.data.SyndicatedFeedEntry;
 import com.josephblough.fluchallenge.data.SyndicatedFeedEntryTopic;
