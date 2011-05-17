@@ -115,23 +115,24 @@ public class FluPodcasts extends FeedListActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         ApplicationController app = (ApplicationController)getApplicationContext();
+        PodcastFeedEntry entry = (PodcastFeedEntry)((PodcastFeedEntryAdapter)getListAdapter()).getItem(info.position);
 
         switch (item.getItemId()) {
         case R.id.context_menu_play_podcast:
-            app.playPodcast(info.position);
+            app.playPodcast(entry);
             refreshList();
             return true;
         case R.id.context_menu_share_link:
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, app.fluPodcastsFeed.items.get(info.position).link);
+            intent.putExtra(Intent.EXTRA_TEXT, entry.link);
             startActivity(Intent.createChooser(intent,"Share using"));
             return true;
         case R.id.context_menu_view:
-            visitLink(app.fluPodcastsFeed.items.get(info.position));
+            visitLink(entry);
             return true;
         case R.id.context_menu_download:
-            downloadPodcast((PodcastFeedEntry)app.fluPodcastsFeed.items.get(info.position));
+            downloadPodcast(entry);
             return true;
         };
 

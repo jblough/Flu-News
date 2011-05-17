@@ -97,21 +97,22 @@ public class GenericFeedActivity extends FeedListActivity {
     @Override
     public boolean onContextItemSelected(MenuItem item) {
 	AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+	FeedEntry entry = ((RssFeedEntryAdapter)getListAdapter()).getItem(info.position);
 
 	switch (item.getItemId()) {
 	case R.id.context_menu_share_link:
 	    Intent sharingIntent = new Intent(Intent.ACTION_SEND);
 	    sharingIntent.setType("text/plain");
-	    sharingIntent.putExtra(Intent.EXTRA_TEXT, getFeed().get(info.position).link);
+	    sharingIntent.putExtra(Intent.EXTRA_TEXT, entry.link);
 	    startActivity(Intent.createChooser(sharingIntent,"Share using"));
 	    return true;
 	case R.id.context_menu_view:
-	    visitLink(getFeed().get(info.position));
+	    visitLink(entry);
 	    return true;
 	case R.id.context_menu_related_topics:
 	    Intent topicIntent = new Intent(this, SyndicatedFeedTopicsActivity.class);
 	    topicIntent.putExtra(SyndicatedFeedTopicsActivity.FEED_TOPIC_EXTRA, feed);
-	    topicIntent.putExtra(SyndicatedFeedTopicsActivity.FEED_INDEX_EXTRA, info.position);
+	    topicIntent.putExtra(SyndicatedFeedTopicsActivity.FEED_INDEX_EXTRA, findFeedEntryPosition(entry));
 	    startActivity(topicIntent);
 	    return true;
 	};
@@ -130,6 +131,15 @@ public class GenericFeedActivity extends FeedListActivity {
 	default:
 	    return (app.syndicatedFeeds.containsKey(feed)) ? app.syndicatedFeeds.get(feed).items : null;
 	}
+    }
+    
+    private int findFeedEntryPosition(final FeedEntry entry) {
+	List<FeedEntry> entries = getFeed();
+	for (int i=0; i<entries.size(); i++) {
+	    if (entries.get(i).equals(entry))
+		return i;
+	}
+	return -1;
     }
     
     private void retrieveFeed() {

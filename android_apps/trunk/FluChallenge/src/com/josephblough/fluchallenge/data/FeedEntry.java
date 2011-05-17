@@ -8,4 +8,9 @@ public class FeedEntry {
     public String link;
     public String guid;
     public String date; // TODO - make this a date
+    
+    @Override
+    public String toString() {
+	return title + "\\" + description + "\\" + "\\" + date;
+    }
 }

@@ -22,6 +22,7 @@ public class FeedListActivity extends ListActivity implements OnItemSelectedList
 
 	getListView().setOnItemSelectedListener(this);
 	getListView().setOnItemClickListener(this);
+        getListView().setTextFilterEnabled(true);
     }
 
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

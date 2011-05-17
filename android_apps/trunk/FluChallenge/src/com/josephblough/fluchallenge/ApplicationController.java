@@ -55,6 +55,13 @@ public class ApplicationController extends Application implements OnCompletionLi
 	    }*/
 	}
     }
+
+    public void playPodcast(final PodcastFeedEntry entry) {
+	final int position = findPodcast(entry);
+	if (position > -1) {
+	    playPodcast(position);
+	}
+    }
     
     public void playPodcast(final int position) {
 	if (fluPodcastsFeed != null && fluPodcastsFeed.items != null && fluPodcastsFeed.items.size() > 0) {
@@ -110,5 +117,14 @@ public class ApplicationController extends Application implements OnCompletionLi
 
     public void onBufferingUpdate(MediaPlayer player, int percent) {
 	Toast.makeText(this, "Buffering complete: " + percent + "%", Toast.LENGTH_SHORT);
+    }
+    
+    private int findPodcast(final PodcastFeedEntry entry) {
+	for (int i=0; i<fluPodcastsFeed.items.size(); i++) {
+	    if (fluPodcastsFeed.items.get(i).equals(entry)) {
+		return i;
+	    }
+	}
+	return -1;
     }
 }

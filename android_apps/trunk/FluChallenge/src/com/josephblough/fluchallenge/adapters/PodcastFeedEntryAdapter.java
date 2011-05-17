@@ -102,11 +102,10 @@ public class PodcastFeedEntryAdapter extends ArrayAdapter<FeedEntry> {
 		    else {
 			// This podcast is NOT being played, play it
 			control.setImageBitmap(stopImage);
-			//activity.playPodcast(position);
 			new Thread(new Runnable() {
 			    
 			    public void run() {
-				app.playPodcast(position);
+				app.playPodcast(entry);
 			    }
 			}).start();
 			Toast toast = Toast.makeText(activity, "Downloading podcast", Toast.LENGTH_LONG);
