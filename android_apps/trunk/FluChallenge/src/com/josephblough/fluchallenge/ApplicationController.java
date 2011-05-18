@@ -29,7 +29,7 @@ public class ApplicationController extends Application implements OnCompletionLi
     public FluPodcasts activityToUpdateOnPlayCompletion = null;
 
     private MediaPlayer player = null;
-    //private StreamingMediaPlayer player = null;
+    private boolean playerIsPrepared = false;
 
     public void onCreate() {
 	super.onCreate();
@@ -40,7 +40,6 @@ public class ApplicationController extends Application implements OnCompletionLi
 	player.setOnCompletionListener(this);
 	player.setOnPreparedListener(this);
 	player.setOnBufferingUpdateListener(this);
-	//player = new StreamingMediaPlayer(this);	
     }
 
     @Override
@@ -50,61 +49,57 @@ public class ApplicationController extends Application implements OnCompletionLi
 		player.stop();
 	    }
 	    player.release();
-	    /*if (player.getMediaPlayer() != null && player.getMediaPlayer().isPlaying()) {
-		player.getMediaPlayer().stop();
-	    }*/
 	}
     }
 
-    public void playPodcast(final PodcastFeedEntry entry) {
-	final int position = findPodcast(entry);
-	if (position > -1) {
-	    playPodcast(position);
+    public void playPodcast(final int position) {
+	//Log.d(TAG, "playing podcast " + position);
+	if (fluPodcastsFeed != null && fluPodcastsFeed.items != null && fluPodcastsFeed.items.size() > 0) {
+	    PodcastFeedEntry entry = (PodcastFeedEntry)fluPodcastsFeed.items.get(position);
+	    playPodcast(entry);
 	}
     }
     
-    public void playPodcast(final int position) {
-	if (fluPodcastsFeed != null && fluPodcastsFeed.items != null && fluPodcastsFeed.items.size() > 0) {
-	    try {
-		currentlyPlayingPodcast = position;
-		PodcastFeedEntry entry = (PodcastFeedEntry)fluPodcastsFeed.items.get(position);
-		Log.d(TAG, "Downloading " + entry.mp3url);
-		player.reset();
-		player.setDataSource(entry.mp3url);
-		player.prepare();
-		//player.startStreaming(entry.mp3url);
+    public void playPodcast(final PodcastFeedEntry entry) {
+	try {
+	    currentlyPlayingPodcast = findPodcast(entry);
+	    //Log.d(TAG, "Downloading " + entry.mp3url);
+	    if (player.isPlaying()) {
+		player.stop();
 	    }
-	    catch (Exception e) {
-		Log.e(TAG, e.getMessage(), e);
-	    }
+	    player.reset();
+	    playerIsPrepared = false;
+	    player.setDataSource(entry.mp3url);
+	    player.prepareAsync();
+	}
+	catch (Exception e) {
+	    Log.e(TAG, e.getMessage(), e);
 	}
     }
     
     public void stopPodcast() {
+	//Log.d(TAG, "stopPodcast");
 	currentlyPlayingPodcast = null;
 	if (player.isPlaying()) {
 	    player.stop();
 	}
-	/*if (player.getMediaPlayer() != null && player.getMediaPlayer().isPlaying()) {
-	    player.interrupt();
-	}*/
-	
-	/*if (activityToUpdateOnPlayCompletion != null) {
-	    activityToUpdateOnPlayCompletion.refreshList();
-	}*/
     }
 
     public void onPrepared(MediaPlayer player) {
+	playerIsPrepared = true;
 	if (currentlyPlayingPodcast != null) {
 	    player.start();
 	}
     }
 
     public void onCompletion(MediaPlayer player) {
-	currentlyPlayingPodcast = null;
-	
-	if (activityToUpdateOnPlayCompletion != null) {
-	    activityToUpdateOnPlayCompletion.refreshList();
+	//Log.d(TAG, "onCompletion - playback position : " + player.getCurrentPosition() + " of " + player.getDuration());
+	if (playerIsPrepared && player.getDuration() > 0) {
+	    currentlyPlayingPodcast = null;
+
+	    if (activityToUpdateOnPlayCompletion != null) {
+		activityToUpdateOnPlayCompletion.refreshList();
+	    }
 	}
     }
     
