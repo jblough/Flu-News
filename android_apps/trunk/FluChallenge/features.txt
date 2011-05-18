@@ -23,5 +23,7 @@ Nice to have:
 Podcast listview format - DONE
 Work on caching download for less studder
 desktop shortcuts/widgets
-ability to search/filter feeds ****
+ability to search/filter feeds - DONE
 update podcast list row after podcast is finished playing - DONE
+
+*** TEST, TEST, and TEST podcast playback *** - DONE??
