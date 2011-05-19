@@ -1,8 +1,8 @@
 package com.josephblough.fluchallenge.activities;
 
-import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.adapters.RssFeedEntryAdapter;
 import com.josephblough.fluchallenge.data.FeedEntry;
+import com.josephblough.fluchallenge.tasks.PdfCheckerTask;
 
 import android.app.ListActivity;
 import android.content.Intent;
@@ -44,6 +44,11 @@ public class FeedListActivity extends ListActivity implements OnItemSelectedList
 
     protected void visitLink(final FeedEntry entry) {
 	Log.d(TAG, "Selected: " + entry.link);
+	
+	// Display a warning message to the user if this is a PDF document
+	new PdfCheckerTask(this).execute(entry);
+	
+	// Launch the document
 	final Intent intent = new Intent(Intent.ACTION_VIEW).setData(Uri.parse(entry.link));
 	startActivity(intent);
     }
