@@ -1,30 +1,22 @@
 package com.josephblough.fluchallenge.activities;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.josephblough.fluchallenge.ApplicationController;
 import com.josephblough.fluchallenge.R;
 import com.josephblough.fluchallenge.data.TimePeriod;
 import com.josephblough.fluchallenge.services.FluActivityReportDownloaderService;
-import com.josephblough.fluchallenge.tasks.TimePeriodImageDownloaderTask;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 import android.view.Gravity;
-import android.widget.ImageView;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.SeekBar;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.TextView;
@@ -35,34 +27,26 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     private final static String TAG = "FluActivityReport";
 
     private ProgressDialog progress = null;
-    private static final String ERROR_MSG = "There was an error downloading the Flu report";
+    public static final String ERROR_MSG = "There was an error downloading the Flu report";
+    private static final String SAVED_CURRENT_PERIOD = "FluActivityReport.savedCurrentPeriod";
+
     private static final String IMAGE_URL = "http://www.cdc.gov/flu/weekly/%ARCHIVE_DIRECTORY%/images/%IMAGE_FILENAME%";
     private static final String IMAGE_DIRECTORY_PLACEHOLDER = "%ARCHIVE_DIRECTORY%";
     private static final String IMAGE_FILENAME_PLACEHOLDER = "%IMAGE_FILENAME%";
-    private static final String SAVED_CURRENT_PERIOD = "FluActivityReport.savedCurrentPeriod";
-    private static final String SAVED_CURRENT_BITMAP = "FluActivityReport.savedCurrentBitmap";
     
+
     private TextView mapTitle = null;
     private SeekBar periodSeekbar = null;
-    private ImageView mapImage = null;
-    private Map<Integer, Bitmap> imageCache;
+    private WebView mapImage = null;
     private Integer savedImageIndex = null;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate");
 
-	this.imageCache = new HashMap<Integer, Bitmap>();
-        
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SAVED_CURRENT_PERIOD)) {
         	this.savedImageIndex = savedInstanceState.getInt(SAVED_CURRENT_PERIOD);
-                if (savedInstanceState.containsKey(SAVED_CURRENT_BITMAP)) {
-                    Bitmap currentBitmap = savedInstanceState.getParcelable(SAVED_CURRENT_BITMAP);
-                    if (this.savedImageIndex != null && currentBitmap != null) {
-                	imageCache.put(this.savedImageIndex, currentBitmap);
-                    }
-                }
             }
         }
         
@@ -70,7 +54,18 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 
         this.mapTitle = (TextView) findViewById(R.id.flu_activity_week_label);
 	this.periodSeekbar = (SeekBar) findViewById(R.id.flu_activity_week_seekbar);
-	this.mapImage = (ImageView) findViewById(R.id.flu_activity_map);
+	this.mapImage = (WebView) findViewById(R.id.flu_activity_map);
+	this.mapImage.setWebViewClient(new WebViewClient() {
+	    @Override
+	    public void onPageFinished(WebView view, String url) {
+	        super.onPageFinished(view, url);
+	        
+		if (progress != null)
+		    progress.dismiss();
+	    }
+	});
+	this.mapImage.getSettings().setSupportZoom(false);
+	this.mapImage.setBackgroundColor(0);
 
 	this.periodSeekbar.setOnSeekBarChangeListener(this);
     }
@@ -82,7 +77,6 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 		    @Override
 		    public void handleMessage(Message message) {
 			if (message.arg1 == Activity.RESULT_OK) {
-			    //Log.d(TAG, "loadFluActivityReport handleMessage");
 			    done();
 			} else {
 			    error(ERROR_MSG);
@@ -119,54 +113,8 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	this.mapTitle.setText(period.subtitle);
 	this.periodSeekbar.setProgress(currentPeriod);
 
-	if (imageCache.containsKey(currentPeriod) && imageCache.get(Integer.valueOf(currentPeriod)) != null) {
-	    done(imageCache.get(currentPeriod));
-	}
-	else {
-	    //Log.d(TAG, "done -> updateImage");
-	    updateImage(period);
-	}
-    }
-
-    private void updateImage(TimePeriod period) {
 	progress = ProgressDialog.show(this, "", "Downloading map image...");
-	String archiveDirectory = "weeklyarchives" + (period.year-1) + "-" + period.year;
-	String imageFilename = "usmap" + period.number + ".jpg";
-	String imageUrl = 
-	    IMAGE_URL.replace(IMAGE_DIRECTORY_PLACEHOLDER, archiveDirectory).replace(IMAGE_FILENAME_PLACEHOLDER, imageFilename);
-	new TimePeriodImageDownloaderTask(this).execute(imageUrl);
-    }
-    
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            Log.e(TAG, e.getMessage(), e);
-        }
-        return null;
-    }
-
-    public void done(final Bitmap bitmap) {
-	if (progress != null)
-	    progress.dismiss();
-	
-	if (bitmap == null) {
-            Toast toast = Toast.makeText(this, "Unable to download image", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.BOTTOM, 0, 0);
-            toast.show();
-	}
-	else {
-	    if (bitmap != null) {
-		mapImage.setImageBitmap(bitmap);
-		imageCache.put(periodSeekbar.getProgress(), bitmap);
-	    }
-	}
+	mapImage.loadDataWithBaseURL(null, getImageWebPageHtml(period), "text/html", "utf-8", null);
     }
     
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -184,14 +132,8 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	final ApplicationController app = (ApplicationController)getApplicationContext();
 	TimePeriod period = app.fluReport.periods.get(seekBar.getProgress());
 	mapTitle.setText(period.subtitle);
-	if (imageCache.containsKey(seekBar.getProgress()) &&
-		imageCache.get(seekBar.getProgress()) != null) {
-	    done(imageCache.get(seekBar.getProgress()));
-	}
-	else {
-	    //Log.d(TAG, "onStopTrackingTouch -> updateImage");
-	    updateImage(period);
-	}
+	progress = ProgressDialog.show(this, "", "Downloading map image...");
+	mapImage.loadDataWithBaseURL(null, getImageWebPageHtml(period), "text/html", "utf-8", null);
     }
 
     @Override
@@ -212,14 +154,27 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
 	    loadFluActivityReport();
     }
     
+    private String generateUrl(final TimePeriod period) {
+	String archiveDirectory = "weeklyarchives" + (period.year-1) + "-" + period.year;
+	String imageFilename = "usmap" + period.number + ".jpg";
+	String imageUrl = 
+	    IMAGE_URL.replace(IMAGE_DIRECTORY_PLACEHOLDER, archiveDirectory).
+	    replace(IMAGE_FILENAME_PLACEHOLDER, imageFilename);
+	return imageUrl;
+    }
+    
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         
         outState.putInt(SAVED_CURRENT_PERIOD, this.periodSeekbar.getProgress());
-        Bitmap currentBitmap = this.imageCache.get(Integer.valueOf(this.periodSeekbar.getProgress()));
-        if (currentBitmap != null) {
-            outState.putParcelable(SAVED_CURRENT_BITMAP, currentBitmap);
-        }
+    }
+
+    private String getImageWebPageHtml(final TimePeriod period) {
+	//final String sizingAttribute = (mapImage.getHeight() >= mapImage.getWidth()) ? "width" : "height";
+	final String sizingAttribute = 
+	    (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? "width" : "height";
+	final String page = "<html><body><center><img src=\"" + generateUrl(period) + "\" " + sizingAttribute + "=\"100%\" /></center></body></html>";
+	return page;
     }
 }
