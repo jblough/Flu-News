@@ -20,7 +20,13 @@ Launch music player with downloaded podcast from notification link - DONE
 Show download progress in notification area - DONE
 WebView for map display - DONE
 Add zoom toogle for flu activity map - DONE
-Look into filtering issues (case sensitive issues or toString implementation?)
+Look into filtering issues (case sensitive issues or toString implementation?) - Starts with was the issue
+GridView icons:
+    Flu Activity Report - map thumbnail?
+    Flu Updates - RSS feed
+    Flu Podcasts - microphone or headphones
+    Flu Pages
+    CDC Feature pages
 
 Nice to have:
 Podcast listview format - DONE
