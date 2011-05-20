@@ -14,6 +14,7 @@
         android:layout_width="match_parent" 
         android:paddingLeft="10dip" 
         android:paddingRight="10dip"
+        android:saveEnabled="false"
         android:layout_gravity="center_horizontal" />
     <WebView android:id="@+id/flu_activity_map"
         android:layout_width="match_parent" 

@@ -19,6 +19,7 @@ Fix download podcast connection leak - DONE
 Launch music player with downloaded podcast from notification link - DONE
 Show download progress in notification area - DONE
 WebView for map display - DONE
+Add zoom toogle for flu activity map - DONE
 Look into filtering issues (case sensitive issues or toString implementation?)
 
 Nice to have:

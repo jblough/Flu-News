@@ -43,6 +43,7 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     private SeekBar periodSeekbar = null;
     private WebView mapImage = null;
     private Integer savedImageIndex = null;
+    private Integer startMapProgress = null;
     private boolean isZoomEnabled = false;
     
     public void onCreate(Bundle savedInstanceState) {
@@ -132,16 +133,18 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {
-	// TODO Auto-generated method stub
-	
+	startMapProgress = seekBar.getProgress();
     }
 
     public void onStopTrackingTouch(SeekBar seekBar) {
-	final ApplicationController app = (ApplicationController)getApplicationContext();
-	TimePeriod period = app.fluReport.periods.get(seekBar.getProgress());
-	mapTitle.setText(period.subtitle);
-	progress = ProgressDialog.show(this, "", "Downloading map image...");
-	mapImage.loadDataWithBaseURL(null, getImageWebPageHtml(period), "text/html", "utf-8", null);
+	if (startMapProgress != null && startMapProgress.intValue() != seekBar.getProgress()) {
+	    final ApplicationController app = (ApplicationController)getApplicationContext();
+	    TimePeriod period = app.fluReport.periods.get(seekBar.getProgress());
+	    mapTitle.setText(period.subtitle);
+	    progress = ProgressDialog.show(this, "", "Downloading map image...");
+	    mapImage.loadDataWithBaseURL(null, getImageWebPageHtml(period), "text/html", "utf-8", null);
+	}
+	startMapProgress = null;
     }
 
     @Override
