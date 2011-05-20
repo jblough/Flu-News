@@ -152,7 +152,6 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	feeds.add(CDC_FEATURE_TITLE);
 
 	FeedListingAdapter adapter = new FeedListingAdapter(this, R.layout.main_grid_cell, R.id.grid_cell_title, feeds);
-	//setListAdapter(adapter);
 	gridView.setAdapter(adapter);
     }
     
@@ -210,55 +209,65 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	
-	if (FLU_ACTIVIY_TITLE.equals(title)) {
-	    if (app.fluReport == null) {
-		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
-	    }
-	    //else
-		//return app.fluReport;
-	}
-	else if (FLU_UPDATES_TITLE.equals(title)) {
-	    if (app.fluUpdatesFeed == null) {
-		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
-	    }
-	    else
-		return Feed.FEED_FLU_UPDATES;
-	}
-	else if (FLU_PODCASTS_TITLE.equals(title)) {
-	    if (app.fluPodcastsFeed == null) {
-		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
-	    }
-	    else
-		return Feed.FEED_FLU_PODCASTS;
-	}
-	else if (FLU_PAGES_TITLE.equals(title)) {
-	    if (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) == null) {
-		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
-	    }
-	    else
-		return SyndicatedFeed.FLU_PAGES_TOPIC_ID;
-	}
-	else if (CDC_FEATURE_TITLE.equals(title)) {
-	    if (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) == null) {
-		Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
-		toast.setGravity(Gravity.BOTTOM, 0, 0);
-		toast.show();
-	    }
-	    else
-		return SyndicatedFeed.CDC_PAGES_TOPIC_ID;
+	if (app.failedFeedRetrievals.contains(title)) {
+	    Toast toast = Toast.makeText(this, "There was an error loading the " + title + " feed", Toast.LENGTH_LONG);
+	    toast.setGravity(Gravity.BOTTOM, 0, 0);
+	    toast.show();
+	    Toast toast2 = Toast.makeText(this, "Select 'Refresh' from the menu to re-attempt loading", Toast.LENGTH_LONG);
+	    toast2.setGravity(Gravity.BOTTOM, 0, 0);
+	    toast2.show();
 	}
 	else {
-	    for (Entry<Integer, SyndicatedFeed> entry : app.syndicatedFeeds.entrySet()) {
-		if (title.equals(entry.getValue().title)) {
-		    return entry.getKey();
+	    if (FLU_ACTIVIY_TITLE.equals(title)) {
+		if (app.fluReport == null) {
+		    Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		    toast.setGravity(Gravity.BOTTOM, 0, 0);
+		    toast.show();
+		}
+		//else
+		//return app.fluReport;
+	    }
+	    else if (FLU_UPDATES_TITLE.equals(title)) {
+		if (app.fluUpdatesFeed == null) {
+		    Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		    toast.setGravity(Gravity.BOTTOM, 0, 0);
+		    toast.show();
+		}
+		else
+		    return Feed.FEED_FLU_UPDATES;
+	    }
+	    else if (FLU_PODCASTS_TITLE.equals(title)) {
+		if (app.fluPodcastsFeed == null) {
+		    Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		    toast.setGravity(Gravity.BOTTOM, 0, 0);
+		    toast.show();
+		}
+		else
+		    return Feed.FEED_FLU_PODCASTS;
+	    }
+	    else if (FLU_PAGES_TITLE.equals(title)) {
+		if (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) == null) {
+		    Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		    toast.setGravity(Gravity.BOTTOM, 0, 0);
+		    toast.show();
+		}
+		else
+		    return SyndicatedFeed.FLU_PAGES_TOPIC_ID;
+	    }
+	    else if (CDC_FEATURE_TITLE.equals(title)) {
+		if (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) == null) {
+		    Toast toast = Toast.makeText(this, title + " still loading...", Toast.LENGTH_LONG);
+		    toast.setGravity(Gravity.BOTTOM, 0, 0);
+		    toast.show();
+		}
+		else
+		    return SyndicatedFeed.CDC_PAGES_TOPIC_ID;
+	    }
+	    else {
+		for (Entry<Integer, SyndicatedFeed> entry : app.syndicatedFeeds.entrySet()) {
+		    if (title.equals(entry.getValue().title)) {
+			return entry.getKey();
+		    }
 		}
 	    }
 	}
@@ -269,19 +278,21 @@ public class GridPresentation extends Activity implements OnItemClickListener {
     private boolean isFinishedLoading(final String rowLabel) {
 	ApplicationController app = (ApplicationController)getApplicationContext();
 	if (FLU_ACTIVIY_TITLE.equals(rowLabel)) {
-	    return (app.fluReport != null);
+	    return (app.fluReport != null || app.failedFeedRetrievals.contains(FLU_ACTIVIY_TITLE));
 	}
 	else if (FLU_UPDATES_TITLE.equals(rowLabel)) {
-	    return (app.fluUpdatesFeed != null);
+	    return (app.fluUpdatesFeed != null || app.failedFeedRetrievals.contains(FLU_UPDATES_TITLE));
 	}
 	else if (FLU_PODCASTS_TITLE.equals(rowLabel)) {
-	    return (app.fluUpdatesFeed != null);
+	    return (app.fluUpdatesFeed != null || app.failedFeedRetrievals.contains(FLU_PODCASTS_TITLE));
 	}
 	else if (FLU_PAGES_TITLE.equals(rowLabel)) {
-	    return (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) != null);
+	    return (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) != null || 
+		    app.failedFeedRetrievals.contains(FLU_PAGES_TITLE));
 	}
 	else if (CDC_FEATURE_TITLE.equals(rowLabel)) {
-	    return (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) != null);
+	    return (app.syndicatedFeeds.get(SyndicatedFeed.CDC_PAGES_TOPIC_ID) != null || 
+		    app.failedFeedRetrievals.contains(CDC_FEATURE_TITLE));
 	}
 	else {
 	    for (Entry<Integer, SyndicatedFeed> entry : app.syndicatedFeeds.entrySet()) {
@@ -294,11 +305,14 @@ public class GridPresentation extends Activity implements OnItemClickListener {
     }
     
     private void done() {
-	//((FeedListingAdapter)getListAdapter()).notifyDataSetChanged();
 	((FeedListingAdapter)gridView.getAdapter()).notifyDataSetChanged();
     }
     
     private void error(final String rowLabel) {
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	app.failedFeedRetrievals.add(rowLabel);
+	((FeedListingAdapter)gridView.getAdapter()).notifyDataSetChanged();
+	
 	Toast toast = Toast.makeText(this, ERROR_MSG.replace("%s", rowLabel), Toast.LENGTH_LONG);
 	toast.setGravity(Gravity.BOTTOM, 0, 0);
 	toast.show();
@@ -362,7 +376,7 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	app.fluUpdatesFeed = null;
 	app.fluPodcastsFeed = null;
 	app.syndicatedFeeds.clear();
-	//((FeedListingAdapter)getListAdapter()).notifyDataSetChanged();
+	app.failedFeedRetrievals.clear();
 	((FeedListingAdapter)gridView.getAdapter()).notifyDataSetChanged();
 	loadFeeds();
     }

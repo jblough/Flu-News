@@ -1,7 +1,9 @@
 package com.josephblough.fluchallenge;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.josephblough.fluchallenge.activities.FluPodcasts;
 import com.josephblough.fluchallenge.data.Feed;
@@ -27,6 +29,7 @@ public class ApplicationController extends Application implements OnCompletionLi
     public Map<Integer, SyndicatedFeed> syndicatedFeeds = new HashMap<Integer, SyndicatedFeed>();
     public Integer currentlyPlayingPodcast = null;
     public FluPodcasts activityToUpdateOnPlayCompletion = null;
+    public Set<String> failedFeedRetrievals = new HashSet<String>();
 
     private MediaPlayer player = null;
     private boolean playerIsPrepared = false;

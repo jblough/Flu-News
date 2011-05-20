@@ -8,7 +8,7 @@ Long click menu
 Launch related feeds menu (syndicated) - DONE
 refresh feeds menu items - DONE
 Some links go to PDf files ?? - Maybe alert the user somehow? - Can HttpClient check content-type? - DONE
-Errors downloading feeds should remove the progress indicator
+Errors downloading feeds should remove the progress indicator - DONE
 Flu activity screen - DONE
 Flu activity screen map rendering - DONE
 Change stop playing podcast image from pause to stop (square) - DONE
@@ -20,18 +20,18 @@ Launch music player with downloaded podcast from notification link - DONE
 Show download progress in notification area - DONE
 WebView for map display - DONE
 Add zoom toogle for flu activity map - DONE
-Look into filtering issues (case sensitive issues or toString implementation?) - Starts with was the issue
+Look into filtering issues (case sensitive issues or toString implementation?) - 'Starts with' was the issue
 GridView icons:
-    Flu Activity Report - map thumbnail?
-    Flu Updates - RSS feed
-    Flu Podcasts - microphone or headphones
-    Flu Pages
-    CDC Feature pages
+    Flu Activity Report - map thumbnail? - DONE
+    Flu Updates - RSS feed - DONE
+    Flu Podcasts - microphone or headphones - DONE
+    Flu Pages - DONE
+    CDC Feature pages - DONE
 
 Nice to have:
 Podcast listview format - DONE
 Work on caching download for less studder
-desktop shortcuts/widgets
+desktop shortcuts/widgets - THROUGH LONG CLICK CONTEXT MENU ON GRID VIEW
 ability to search/filter feeds - DONE
 update podcast list row after podcast is finished playing - DONE
 
