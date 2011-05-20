@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/menu_item_toggle_zoom"
+        android:title="@string/menu_item_enable_zoom"
+        android:checkable="true"
+        android:icon="@drawable/ic_menu_zoom" />
+        
+</menu>

@@ -15,6 +15,9 @@ import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.SeekBar;
@@ -29,6 +32,7 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     private ProgressDialog progress = null;
     public static final String ERROR_MSG = "There was an error downloading the Flu report";
     private static final String SAVED_CURRENT_PERIOD = "FluActivityReport.savedCurrentPeriod";
+    private static final String SAVED_ZOOM_STATE = "FluActivityReport.savedZoomedState";
 
     private static final String IMAGE_URL = "http://www.cdc.gov/flu/weekly/%ARCHIVE_DIRECTORY%/images/%IMAGE_FILENAME%";
     private static final String IMAGE_DIRECTORY_PLACEHOLDER = "%ARCHIVE_DIRECTORY%";
@@ -39,6 +43,7 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
     private SeekBar periodSeekbar = null;
     private WebView mapImage = null;
     private Integer savedImageIndex = null;
+    private boolean isZoomEnabled = false;
     
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +52,9 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(SAVED_CURRENT_PERIOD)) {
         	this.savedImageIndex = savedInstanceState.getInt(SAVED_CURRENT_PERIOD);
+            }
+            if (savedInstanceState.containsKey(SAVED_ZOOM_STATE)) {
+        	this.isZoomEnabled = savedInstanceState.getBoolean(SAVED_ZOOM_STATE);
             }
         }
         
@@ -168,13 +176,50 @@ public class FluActivityReport extends Activity implements OnSeekBarChangeListen
         super.onSaveInstanceState(outState);
         
         outState.putInt(SAVED_CURRENT_PERIOD, this.periodSeekbar.getProgress());
+        outState.putBoolean(SAVED_ZOOM_STATE, this.isZoomEnabled);
     }
 
+    private String getImageWebPageHtml() {
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	TimePeriod period = app.fluReport.periods.get(this.periodSeekbar.getProgress());
+	return getImageWebPageHtml(period);
+    }
+    
     private String getImageWebPageHtml(final TimePeriod period) {
-	//final String sizingAttribute = (mapImage.getHeight() >= mapImage.getWidth()) ? "width" : "height";
-	final String sizingAttribute = 
-	    (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? "width" : "height";
-	final String page = "<html><body><center><img src=\"" + generateUrl(period) + "\" " + sizingAttribute + "=\"100%\" /></center></body></html>";
-	return page;
+	if (isZoomEnabled) {
+	    return "<html><body><center><img src=\"" + generateUrl(period) + "\" /></center></body></html>";
+	}
+	else {
+	    //final String sizingAttribute = (mapImage.getHeight() >= mapImage.getWidth()) ? "width" : "height";
+	    final String sizingAttribute = 
+		(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) ? "width" : "height";
+	    return "<html><body><center><img src=\"" + generateUrl(period) + "\" " + sizingAttribute + "=\"100%\" /></center></body></html>";
+	}
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+	MenuInflater inflater = getMenuInflater();
+	inflater.inflate(R.menu.flu_activity_report_menu, menu);
+	//zoomMenuItem.setChecked(isZoomEnabled);
+	return true;
+    }
+    
+    public boolean onOptionsItemSelected(MenuItem item) {
+	switch (item.getItemId()) {
+	case R.id.menu_item_toggle_zoom:
+	    final String title = getString((!isZoomEnabled) ? R.string.menu_item_disable_zoom : R.string.menu_item_enable_zoom);
+	    //Log.d(TAG, "Setting title to " + title);
+	    item.setTitle(title);
+	    toggleZoom();
+	    break;
+	}
+	return super.onOptionsItemSelected(item);
+    }
+    
+    private void toggleZoom() {
+	isZoomEnabled = !isZoomEnabled;
+	this.mapImage.getSettings().setSupportZoom(isZoomEnabled);
+	this.mapImage.getSettings().setBuiltInZoomControls(isZoomEnabled);
+	mapImage.loadDataWithBaseURL(null, getImageWebPageHtml(), "text/html", "utf-8", null);
     }
 }

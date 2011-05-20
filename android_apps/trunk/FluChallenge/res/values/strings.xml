@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Flu App Challenge</string>
+    <string name="app_name">Flu News</string>
     <string name="flu_vaccination_estimates_xls">Influenza Vaccination Estimatest (xls)</string>
     <string name="weekly_flu_activity_xml">Weekly Flu Activity Report</string>
     <string name="flu_pages_rss_xml">Influenza Pages (xml)</string>
@@ -17,4 +17,7 @@
     <string name="context_menu_related_topics_label">Related Topics</string>
     <string name="related_topics_name">Related Topics</string>
     <string name="menu_item_refresh_label">Refresh</string>
+    <string name="content_is_pdf_warning">This document is a PDF. You may need to launch this document from the notification area</string>
+    <string name="menu_item_enable_zoom">Enable map zooming</string>
+    <string name="menu_item_disable_zoom">Disable map zooming</string>
 </resources>

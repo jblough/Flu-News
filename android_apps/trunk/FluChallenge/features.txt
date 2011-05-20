@@ -7,7 +7,7 @@ Long click menu
     related topics - DONE
 Launch related feeds menu (syndicated) - DONE
 refresh feeds menu items - DONE
-Some links go to PDf files ?? - Nothing can be done.  Maybe alert the user somehow?
+Some links go to PDf files ?? - Maybe alert the user somehow? - Can HttpClient check content-type? - DONE
 Errors downloading feeds should remove the progress indicator
 Flu activity screen - DONE
 Flu activity screen map rendering - DONE
@@ -18,6 +18,8 @@ Download podcast (if the audio downloads directory can be determined) - DONE
 Fix download podcast connection leak - DONE
 Launch music player with downloaded podcast from notification link - DONE
 Show download progress in notification area - DONE
+WebView for map display - DONE
+Look into filtering issues (case sensitive issues or toString implementation?)
 
 Nice to have:
 Podcast listview format - DONE
