@@ -21,6 +21,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Messenger;
 import android.util.Log;
+import android.view.ContextMenu;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -29,6 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
@@ -61,87 +63,18 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	//getListView().setOnItemClickListener(this);
 	gridView.setOnItemClickListener(this);
 	
+	registerForContextMenu(gridView);
+	
 	populateList();
 	loadFeeds();
     }
 
     public void loadFeeds() {
-	// Flu activity report
-	Intent intent = new Intent(this, FluActivityReportDownloaderService.class);
-	intent.putExtra(FluActivityReportDownloaderService.EXTRA_MESSENGER,
-		new Messenger(new Handler() {
-		    @Override
-		    public void handleMessage(Message message) {
-			if (message.arg1 == Activity.RESULT_OK) {
-			    done();
-			} else {
-			    error(FLU_ACTIVIY_TITLE);
-			}
-		    }
-		}));
-	startService(intent);
-	
-	// Flu updates
-	intent = new Intent(this, FluUpdatesFeedDownloaderService.class);
-	intent.putExtra(FluUpdatesFeedDownloaderService.EXTRA_MESSENGER,
-		new Messenger(new Handler() {
-		    @Override
-		    public void handleMessage(Message message) {
-			if (message.arg1 == Activity.RESULT_OK) {
-			    done();
-			} else {
-			    error(FLU_UPDATES_TITLE);
-			}
-		    }
-		}));
-	startService(intent);
-	
-	// Flu podcasts
-	intent = new Intent(this, FluPodcastsFeedDownloaderService.class);
-	intent.putExtra(FluPodcastsFeedDownloaderService.EXTRA_MESSENGER,
-		new Messenger(new Handler() {
-		    @Override
-		    public void handleMessage(Message message) {
-			if (message.arg1 == Activity.RESULT_OK) {
-			    done();
-			} else {
-			    error(FLU_PODCASTS_TITLE);
-			}
-		    }
-		}));
-	startService(intent);
-	
-	// Flu pages
-	intent = new Intent(this, SyndicatedFeedDownloaderService.class);
-	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, SyndicatedFeed.FLU_PAGES_TOPIC_ID);
-	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
-		new Messenger(new Handler() {
-		    @Override
-		    public void handleMessage(Message message) {
-			if (message.arg1 == Activity.RESULT_OK) {
-			    done();
-			} else {
-			    error(FLU_PAGES_TITLE);
-			}
-		    }
-		}));
-	startService(intent);
-	
-	// CDC pages
-	intent = new Intent(this, SyndicatedFeedDownloaderService.class);
-	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, SyndicatedFeed.CDC_PAGES_TOPIC_ID);
-	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
-		new Messenger(new Handler() {
-		    @Override
-		    public void handleMessage(Message message) {
-			if (message.arg1 == Activity.RESULT_OK) {
-			    done();
-			} else {
-			    error(CDC_FEATURE_TITLE);
-			}
-		    }
-		}));
-	startService(intent);
+	loadFluActivityReport();
+	loadFluUpdatesFeed();
+	loadFluPodcastsFeed();
+	loadFluPagesFeed();
+	loadCdcFeaturePagesFeed();
     }
     
     public void populateList() {
@@ -284,7 +217,7 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	    return (app.fluUpdatesFeed != null || app.failedFeedRetrievals.contains(FLU_UPDATES_TITLE));
 	}
 	else if (FLU_PODCASTS_TITLE.equals(rowLabel)) {
-	    return (app.fluUpdatesFeed != null || app.failedFeedRetrievals.contains(FLU_PODCASTS_TITLE));
+	    return (app.fluPodcastsFeed != null || app.failedFeedRetrievals.contains(FLU_PODCASTS_TITLE));
 	}
 	else if (FLU_PAGES_TITLE.equals(rowLabel)) {
 	    return (app.syndicatedFeeds.get(SyndicatedFeed.FLU_PAGES_TOPIC_ID) != null || 
@@ -379,5 +312,144 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	app.failedFeedRetrievals.clear();
 	((FeedListingAdapter)gridView.getAdapter()).notifyDataSetChanged();
 	loadFeeds();
+    }
+
+    
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View view, ContextMenu.ContextMenuInfo menuInfo) {
+
+        super.onCreateContextMenu(menu, view, menuInfo);
+        getMenuInflater().inflate(R.menu.feed_menu, menu);
+
+        final String title = (String)this.gridView.getAdapter().getItem(((AdapterContextMenuInfo) menuInfo).position);
+        menu.findItem(R.id.menu_item_refresh).setTitle("Refresh " + title);
+    }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+
+        switch (item.getItemId()) {
+        case R.id.menu_item_refresh:
+            final String title = (String)this.gridView.getAdapter().getItem(info.position);
+            refreshFeed(title);
+            return true;
+        };
+
+        return super.onContextItemSelected(item);
+    }
+
+    private void refreshFeed(final String title) {
+	ApplicationController app = (ApplicationController)getApplicationContext();
+	if (FLU_ACTIVIY_TITLE.equals(title)) {
+	    app.fluReport = null;
+	    loadFluActivityReport();
+	}
+	else if (FLU_UPDATES_TITLE.equals(title)) {
+	    app.fluUpdatesFeed = null;
+	    loadFluUpdatesFeed();
+	}
+	else if (FLU_PODCASTS_TITLE.equals(title)) {
+	    app.fluPodcastsFeed = null;
+	    loadFluPodcastsFeed();
+	}
+	else if (FLU_PAGES_TITLE.equals(title)) {
+	    app.syndicatedFeeds.remove(SyndicatedFeed.FLU_PAGES_TOPIC_ID);
+	    loadFluPagesFeed();
+	}
+	else if (CDC_FEATURE_TITLE.equals(title)) {
+	    app.syndicatedFeeds.remove(SyndicatedFeed.CDC_PAGES_TOPIC_ID);
+	    loadCdcFeaturePagesFeed();
+	}
+	
+	app.failedFeedRetrievals.remove(title);
+	((FeedListingAdapter)gridView.getAdapter()).notifyDataSetChanged();
+    }
+
+    public void loadFluActivityReport() {
+	// Flu activity report
+	Intent intent = new Intent(this, FluActivityReportDownloaderService.class);
+	intent.putExtra(FluActivityReportDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(FLU_ACTIVIY_TITLE);
+			}
+		    }
+		}));
+	startService(intent);
+    }
+    
+    public void loadFluUpdatesFeed() {
+	// Flu updates
+	Intent intent = new Intent(this, FluUpdatesFeedDownloaderService.class);
+	intent.putExtra(FluUpdatesFeedDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(FLU_UPDATES_TITLE);
+			}
+		    }
+		}));
+	startService(intent);
+    }
+
+    public void loadFluPodcastsFeed() {
+	// Flu podcasts
+	Intent intent = new Intent(this, FluPodcastsFeedDownloaderService.class);
+	intent.putExtra(FluPodcastsFeedDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(FLU_PODCASTS_TITLE);
+			}
+		    }
+		}));
+	startService(intent);
+    }
+    
+    public void loadFluPagesFeed() {
+	// Flu pages
+	Intent intent = new Intent(this, SyndicatedFeedDownloaderService.class);
+	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, SyndicatedFeed.FLU_PAGES_TOPIC_ID);
+	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(FLU_PAGES_TITLE);
+			}
+		    }
+		}));
+	startService(intent);
+    }
+    
+    public void loadCdcFeaturePagesFeed() {
+	// CDC pages
+	Intent intent = new Intent(this, SyndicatedFeedDownloaderService.class);
+	intent.putExtra(SyndicatedFeedDownloaderService.TOPIC_ID, SyndicatedFeed.CDC_PAGES_TOPIC_ID);
+	intent.putExtra(SyndicatedFeedDownloaderService.EXTRA_MESSENGER,
+		new Messenger(new Handler() {
+		    @Override
+		    public void handleMessage(Message message) {
+			if (message.arg1 == Activity.RESULT_OK) {
+			    done();
+			} else {
+			    error(CDC_FEATURE_TITLE);
+			}
+		    }
+		}));
+	startService(intent);
     }
 }
