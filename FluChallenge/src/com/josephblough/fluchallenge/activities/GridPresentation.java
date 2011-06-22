@@ -14,8 +14,11 @@ import com.josephblough.fluchallenge.services.FluUpdatesFeedDownloaderService;
 import com.josephblough.fluchallenge.services.SyndicatedFeedDownloaderService;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -57,6 +60,8 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 	super.onCreate(savedInstanceState);
 
 	setContentView(R.layout.main_grid_layout);
+	
+	displayDisclaimer();
 	
 	gridView = (GridView) findViewById(R.id.gridview);
 	//getListView().setOnItemSelectedListener(this);
@@ -451,5 +456,30 @@ public class GridPresentation extends Activity implements OnItemClickListener {
 		    }
 		}));
 	startService(intent);
+    }
+
+    public void displayDisclaimer() {
+	final String disclaimerSetting = "shownDisclaimer";
+	final SharedPreferences preferences = this.getSharedPreferences(getClass().getName(), 0);
+	final boolean shownDisclaimer = preferences.getBoolean(disclaimerSetting, false);
+	if (!shownDisclaimer) {
+	    AlertDialog.Builder alert = new AlertDialog.Builder(GridPresentation.this);
+	    alert.setTitle("Disclaimer");
+	    alert.setCancelable(false);
+	    alert.setMessage(getString(R.string.disclaimer)).
+	    setPositiveButton("Accept", new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int id) {
+		    SharedPreferences.Editor editor = preferences.edit();
+		    editor.putBoolean(disclaimerSetting, true);
+		    editor.commit();
+		}
+	    }).
+	    setNegativeButton("Decline", new DialogInterface.OnClickListener() {
+		public void onClick(DialogInterface dialog, int id) {
+		    finish();
+		}
+	    });
+	    alert.show();
+	}
     }
 }
